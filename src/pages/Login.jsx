@@ -9,42 +9,48 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+  e.preventDefault();
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await res.json();
-      if (res.ok) {
-        login(data);
-        alert("Login successful");
-        navigate("/dashboard"); // redirect after login
-      } else {
-        alert(data.message || "Login failed");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+    const data = await res.json();
+    console.log("Login response:", data); // debug
+
+    if (res.ok) {
+      login(data); // save user to context/localStorage
+      alert("Login successful");
+
+      const role = data.role; // access role directly
+      if (role === "Admin") navigate("/admin/dashboard");
+      else if (role === "Instructor") navigate("/instructor/dashboard");
+      else navigate("/student/dashboard");
+    } else {
+      alert(data.message || "Login failed");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong");
+  }
+};
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-md w-96"
+        className="p-8 bg-white shadow-md rounded-xl w-96"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-purple-700">
+        <h2 className="mb-6 text-2xl font-bold text-center text-purple-700">
           LMS Login
         </h2>
 
         <input
           type="email"
           placeholder="Email"
-          className="w-full border border-gray-300 p-2 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -53,13 +59,13 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
-          className="w-full border border-gray-300 p-2 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
 
-        <div className="text-right mb-4">
+        <div className="mb-4 text-right">
           <a
             href="/forgot-password"
             className="text-sm text-purple-600 hover:underline"
@@ -70,12 +76,12 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition duration-200"
+          className="w-full py-2 text-white transition duration-200 bg-purple-600 rounded hover:bg-purple-700"
         >
           Login
         </button>
 
-        <p className="text-sm text-center mt-4 text-gray-600">
+        <p className="mt-4 text-sm text-center text-gray-600">
           Don’t have an account?{" "}
           <a href="/register" className="text-purple-600 hover:underline">
             Register
