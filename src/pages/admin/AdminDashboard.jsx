@@ -1,22 +1,21 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import AdminUserManagement from "../components/AdminUserManagement";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 
 export default function AdminDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
-  
 
   const getActiveSection = () => {
-    if (location.pathname.includes('/users')) return 'users';
-    return 'users'; // default
+    if (location.pathname.includes("/users")) return "users";
+    if (location.pathname.includes("/course")) return "course";
+    return "users"; // default
   };
-  
+
   const [activeSection, setActiveSection] = useState(getActiveSection());
 
   const links = [
-    { name: "Users", section: "users", element: <AdminUserManagement /> },
-    // Add more 
+    { name: "Users", section: "users" },
+    { name: "Course Approval", section: "course" },
   ];
 
   const handleNavClick = (section) => {
@@ -24,14 +23,13 @@ export default function AdminDashboard() {
     navigate(`/admin/dashboard/${section}`);
   };
 
-  // Find the component to render
-  const activeLink = links.find(link => link.section === activeSection);
-
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="flex flex-col w-64 bg-white shadow-md">
-        <div className="p-4 text-lg font-bold text-purple-700 border-b">Admin Panel</div>
+        <div className="p-4 text-lg font-bold text-purple-700 border-b">
+          Admin Panel
+        </div>
         <nav className="flex flex-col">
           {links.map((link) => (
             <button
@@ -49,9 +47,9 @@ export default function AdminDashboard() {
         </nav>
       </div>
 
-      {/* Main content */}
+      {/* Main Content Area */}
       <div className="flex-1 p-4 overflow-auto">
-        {activeLink?.element}
+        <Outlet /> {/* 👈 this will render nested routes */}
       </div>
     </div>
   );

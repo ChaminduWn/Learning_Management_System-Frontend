@@ -10,7 +10,9 @@ import ResetPassword from "./pages/ResetPassword";
 import PrivateRoute from "./components/PrivateRoute";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminCourseApproval from "./components/AdminCourseApproval";
+import AdminUserManagement from "./components/AdminUserManagement";
 
 
 
@@ -37,8 +39,6 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        
-
 
           {/* Protected routes */}
         <Route
@@ -48,7 +48,10 @@ function App() {
               <AdminDashboard />
             </PrivateRoute>
           }
-        />
+        >
+          <Route path="users" element={<AdminUserManagement />} />
+          <Route path="course" element={<AdminCourseApproval />} />
+        </Route>
 
         <Route
           path="/instructor/dashboard"
@@ -58,6 +61,7 @@ function App() {
             </PrivateRoute>
           }
         />
+          
 
         <Route
           path="/student/dashboard"
