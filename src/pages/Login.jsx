@@ -8,6 +8,15 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+//   const handlePasswordChange = (e) => {
+//   const value = e.target.value;
+//   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/u;
+
+//   if (emojiRegex.test(value)) return; 
+
+//   setPassword(value);
+// };
+
   const handleSubmit = async (e) => {
   e.preventDefault();
   try {
@@ -59,8 +68,12 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
+          maxLength="15"
+          // pattern="^[A-Za-z0-9!@#$%^&*()_+]+$"
+          // title="Password should contain only letters, numbers, and symbols"
           className="w-full p-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
           value={password}
+          // onChange={handlePasswordChange}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
@@ -91,3 +104,6 @@ export default function Login() {
     </div>
   );
 }
+
+
+
