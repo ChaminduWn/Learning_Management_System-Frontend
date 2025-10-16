@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -31,18 +32,18 @@ export default function Login() {
 
     if (res.ok) {
       login(data); // save user to context/localStorage
-      alert("Login successful");
-
+      toast.success("✅ Login successful!");
+      
       const role = data.role; // access role directly
       if (role === "Admin") navigate("/admin/dashboard");
       else if (role === "Instructor") navigate("/instructor/dashboard");
       else navigate("/student/dashboard");
     } else {
-      alert(data.message || "Login failed");
+      toast.error(data.message || "❌ Login failed");
     }
   } catch (error) {
     console.error(error);
-    alert("Something went wrong");
+     toast.error("⚠️ Something went wrong!");
   }
 };
 
@@ -104,6 +105,5 @@ export default function Login() {
     </div>
   );
 }
-
 
 

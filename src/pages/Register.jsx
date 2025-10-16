@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -30,14 +31,17 @@ export default function Register() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert("Registration successful! You can now log in.");
+        toast.success("✅ Registration successful! You can now log in.");
+    
         window.location.href = "/login";
       } else {
-        alert(data.message || "Registration failed");
+        toast.error(data.message || "❌ Registration failed");
+        
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong!");
+      toast.error("⚠️ Something went wrong!");
+      
     }
   };
 
