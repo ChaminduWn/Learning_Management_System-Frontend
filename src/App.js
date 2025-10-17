@@ -16,29 +16,37 @@ import AdminUserManagement from "./components/AdminUserManagement";
 import EditCourse from "./pages/courses/EditCourse";
 import MyCourses from "./pages/courses/MyCourses";
 import AddCourse from "./pages/courses/AddCourse";
-
+import Profile from "./pages/Profile";
+import Home from "./pages/Home";
+import Layout from "./components/Layout";
 function App() {
   return (
+    
     <Router>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick
+        rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored"
       />
+      
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route element={<Layout />}>
+        
+        <Route path="/" element={<Home />} />
+        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+         <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+        
 
         {/* Protected routes */}
         <Route
@@ -75,7 +83,7 @@ function App() {
           }
         />
 
-        {/* Optional unauthorized page */}
+       
         <Route
           path="/unauthorized"
           element={
@@ -84,7 +92,9 @@ function App() {
             </h1>
           }
         />
+        </Route>
       </Routes>
+      
     </Router>
   );
 }
