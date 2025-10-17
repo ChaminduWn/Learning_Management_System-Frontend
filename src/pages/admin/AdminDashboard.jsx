@@ -17,7 +17,7 @@ const items = [
 
   return (
     <div className="flex h-screen bg-gray-100">
-        <Sidebar title="Admin Panel 🛠️" items={items} onSelect={handleSelect} />
+        <Sidebar title="Admin Panel 🛠️" items={items} onSelect={handleSelect} role="admin" />
       <div className="flex-1 p-6 bg-gray-100">
         <Outlet />
       </div>
