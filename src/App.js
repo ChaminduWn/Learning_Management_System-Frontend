@@ -13,8 +13,9 @@ import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCourseApproval from "./components/AdminCourseApproval";
 import AdminUserManagement from "./components/AdminUserManagement";
-
-
+import EditCourse from "./pages/courses/EditCourse";
+import MyCourses from "./pages/courses/MyCourses";
+import AddCourse from "./pages/courses/AddCourse";
 
 function App() {
   return (
@@ -39,8 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-
-          {/* Protected routes */}
+        {/* Protected routes */}
         <Route
           path="/admin/dashboard"
           element={
@@ -60,8 +60,11 @@ function App() {
               <InstructorDashboard />
             </PrivateRoute>
           }
-        />
-          
+        >
+          <Route path="my-courses" element={<MyCourses />} />
+          <Route path="add" element={<AddCourse />} />
+          <Route path="edit-course/:id" element={<EditCourse />} />
+        </Route>
 
         <Route
           path="/student/dashboard"
@@ -75,9 +78,12 @@ function App() {
         {/* Optional unauthorized page */}
         <Route
           path="/unauthorized"
-          element={<h1 className="mt-20 text-2xl text-center text-red-600">Access Denied 🚫</h1>}
+          element={
+            <h1 className="mt-20 text-2xl text-center text-red-600">
+              Access Denied 🚫
+            </h1>
+          }
         />
-
       </Routes>
     </Router>
   );

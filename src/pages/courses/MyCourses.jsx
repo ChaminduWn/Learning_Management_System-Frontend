@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState, useCallback} from "reac
 import { AuthContext } from "../../context/AuthContext";
 import CourseCard from "../../components/CourseCard";
 import NotificationModal from "../../components/NotificationModal";
+import { useNavigate } from "react-router-dom";
 
 export default function MyCourses() {
   const { user } = useContext(AuthContext);
@@ -9,6 +10,8 @@ export default function MyCourses() {
   const prevStatusRef = useRef({});
   const [notifications, setNotifications] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   const fetchCourses = useCallback(async () => {
     if (!user) return;
@@ -60,8 +63,9 @@ export default function MyCourses() {
   };
 
   const handleEdit = (course) => {
-    alert("Edit page not implemented yet. Course id: " + course._id);
-  };
+  navigate(`/instructor/dashboard/edit-course/${course._id}`);
+};
+
 
   return (
     <div className="p-6">
