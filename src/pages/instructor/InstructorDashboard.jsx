@@ -17,7 +17,7 @@ export default function InstructorDashboard() {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar items={items} onSelect={handleSelect} />
+      <Sidebar title="Instructor 🎓" items={items} onSelect={handleSelect} />
       <div className="flex-1 p-6 bg-gray-100">
         <Outlet />
       </div>
