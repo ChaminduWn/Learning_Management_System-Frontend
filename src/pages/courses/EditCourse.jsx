@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function EditCourse() {
   const { user } = useContext(AuthContext);
@@ -36,7 +37,8 @@ export default function EditCourse() {
         if (!res.ok) throw new Error(data.message || "Failed to load course");
         setForm(data);
       } catch (err) {
-        alert(err.message);
+        toast.error(err.message);
+        
       }
     };
     fetchCourse();
@@ -60,11 +62,12 @@ export default function EditCourse() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error updating course");
 
-      alert(
-        form.status === "Approved"
-          ? "Minor updates saved successfully."
-          : "Course updated successfully and pending admin re-approval."
-      );
+      toast.success(
+  form.status === "Approved"
+    ? "Minor updates saved successfully."
+    : "Course updated successfully and pending admin re-approval."
+);
+
       navigate("/instructor/dashboard/my-courses");
     } catch (err) {
       alert(err.message);

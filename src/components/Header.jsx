@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { Menu, LogOut, User as UserIcon, GraduationCap } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, GraduationCap } from "lucide-react";
 
 export default function Header() {
   const { user, logout } = useContext(AuthContext);
@@ -25,6 +25,22 @@ export default function Header() {
       : user?.role === "Student"
       ? "bg-green-600"
       : "bg-purple-700";
+
+  // Get role-based dashboard route and label
+  const getDashboardInfo = () => {
+    switch (user?.role) {
+      case "Admin":
+        return { route: "/admin/dashboard", label: "Dashboard" };
+      case "Instructor":
+        return { route: "/instructor/dashboard", label: "Dashboard" };
+      case "Student":
+        return { route: "/student/dashboard", label: "Dashboard" };
+      default:
+        return { route: "/profile", label: "Profile" };
+    }
+  };
+
+  const dashboardInfo = getDashboardInfo();
 
   const navLinks = [
     { path: "/", label: "Home" },
@@ -75,12 +91,12 @@ export default function Header() {
           {menuOpen && (
             <div className="absolute right-0 z-50 w-48 mt-2 text-gray-800 bg-white rounded-lg shadow-lg">
               <Link
-                to="/profile"
+                to={dashboardInfo.route}
                 className="flex items-center px-4 py-2 hover:bg-gray-100"
                 onClick={() => setMenuOpen(false)}
               >
-                <UserIcon size={16} className="mr-2" />
-                Profile
+                <LayoutDashboard size={16} className="mr-2" />
+                {dashboardInfo.label}
               </Link>
               <button
                 onClick={handleLogout}

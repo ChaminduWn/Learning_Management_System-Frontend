@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function AddCourse() {
   const { user } = useContext(AuthContext);
@@ -30,10 +31,11 @@ export default function AddCourse() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error");
-      alert("Course created and pending admin approval.");
+      toast.success("Course created and pending admin approval.");
       setForm({ title: "", moduleCode: "", description: "", category: "", price: "", thumbnail: "" });
     } catch (err) {
-      alert(err.message || "Error creating course");
+      toast.error(err.message || "Error creating course");
+      
     } finally { setLoading(false); }
   };
 
