@@ -20,6 +20,8 @@ import Profile from "./components/Profile";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 import ManageCourseContent from "./pages/courses/ManageCourseContent";
+import CourseView from "./pages/student/CourseView";
+import BrowseCourses from "./pages/student/BrowseCourses";
 function App() {
   return (
     
@@ -38,6 +40,9 @@ function App() {
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+        <Route path="/courses" element={<BrowseCourses />} />      
+        
 
          <Route
             path="/profile"
@@ -86,7 +91,10 @@ function App() {
               <StudentDashboard />
             </PrivateRoute>
           }
-        />
+        >
+
+        <Route path="course/:id" element={<CourseView />} />
+        </Route>
 
        
         <Route
