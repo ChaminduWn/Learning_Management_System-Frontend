@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const { user, login } = useContext(AuthContext);
@@ -16,18 +17,53 @@ export default function Profile() {
 
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [fetchingProfile, setFetchingProfile] = useState(true);
 
+  // Fetch user profile data from backend on mount
   useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name || "",
-        bio: user.bio || "",
-        phone: user.phone || "",
-        address: user.address || "",
-        profilePicture: user.profilePicture || DEFAULT_AVATAR,
-      });
-    }
-  }, [user]);
+    const fetchUserProfile = async () => {
+      if (!user || !user.token) {
+        setFetchingProfile(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/auth/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch profile");
+
+        const data = await res.json();
+        
+        // Update form with fetched data
+        setFormData({
+          name: data.name || "",
+          bio: data.bio || "",
+          phone: data.phone || "",
+          address: data.address || "",
+          profilePicture: data.profilePicture || DEFAULT_AVATAR,
+        });
+
+        // Update context with complete user data (including token)
+        login({ 
+          ...data, 
+          token: user.token, // Keep the existing token
+        });
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        toast.error("Failed to load profile data");
+      } finally {
+        setFetchingProfile(false);
+      }
+    };
+
+    fetchUserProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount - we want this behavior
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,15 +73,26 @@ export default function Profile() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
     // Instant preview
     const previewUrl = URL.createObjectURL(file);
     setFormData((prev) => ({ ...prev, profilePicture: previewUrl }));
 
     const form = new FormData();
     form.append("file", file);
-    form.append("upload_preset", "lms_uploads"); // replace with your preset
+    form.append("upload_preset", "lms_uploads");
     form.append("folder", "lms_profiles");
-
 
     try {
       setUploading(true);
@@ -56,15 +103,24 @@ export default function Profile() {
           body: form,
         }
       );
+
+      if (!res.ok) throw new Error("Upload failed");
+
       const data = await res.json();
       // Update with actual uploaded URL
       setFormData((prev) => ({ ...prev, profilePicture: data.secure_url }));
+      toast.success("Image uploaded successfully!");
     } catch (error) {
       console.error("Image upload failed:", error);
-      alert("Image upload failed");
-      setFormData((prev) => ({ ...prev, profilePicture: DEFAULT_AVATAR }));
+      toast.error("Image upload failed. Please try again.");
+      setFormData((prev) => ({ 
+        ...prev, 
+        profilePicture: user?.profilePicture || DEFAULT_AVATAR 
+      }));
     } finally {
       setUploading(false);
+      // Clean up preview URL
+      URL.revokeObjectURL(previewUrl);
     }
   };
 
@@ -77,37 +133,46 @@ export default function Profile() {
 
     // Prevent submission while uploading
     if (uploading) {
-      alert("Please wait for the image to finish uploading.");
+      toast.error("Please wait for the image to finish uploading.");
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/auth/profile",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/auth/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (!res.ok) throw new Error("Failed to update profile");
 
       const data = await res.json();
+      
+      // IMPORTANT: Update context with the response data
+      // This will trigger re-render in Header component
       login(data);
-      alert("Profile updated successfully!");
+      
+      toast.success("✅ Profile updated successfully!");
     } catch (error) {
       console.error(error);
-      alert("Error updating profile");
+      toast.error("⚠️ Error updating profile. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (fetchingProfile) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg text-gray-600">Loading profile...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl p-6 mx-auto mt-8 bg-white shadow-md rounded-xl">
@@ -119,6 +184,9 @@ export default function Profile() {
             src={formData.profilePicture}
             alt="Profile"
             className="object-cover w-24 h-24 border rounded-full"
+            onError={(e) => {
+              e.target.src = DEFAULT_AVATAR;
+            }}
           />
           {uploading && (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-white bg-black bg-opacity-50 rounded-full">
@@ -127,12 +195,19 @@ export default function Profile() {
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handleImageUpload}
+            disabled={uploading}
+            className="text-sm"
+          />
           {formData.profilePicture !== DEFAULT_AVATAR && (
             <button
               type="button"
               onClick={handleRemoveImage}
-              className="px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600"
+              disabled={uploading}
+              className="px-2 py-1 text-sm text-white bg-red-500 rounded-md hover:bg-red-600 disabled:opacity-50"
             >
               Remove Image
             </button>
@@ -148,6 +223,7 @@ export default function Profile() {
             value={formData.name}
             onChange={handleChange}
             className="w-full p-2 border rounded-md"
+            required
           />
         </div>
 
@@ -158,6 +234,8 @@ export default function Profile() {
             value={formData.bio}
             onChange={handleChange}
             className="w-full p-2 border rounded-md"
+            rows="3"
+            placeholder="Tell us about yourself..."
           ></textarea>
         </div>
 
@@ -169,6 +247,8 @@ export default function Profile() {
               value={formData.phone}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
+              type="tel"
+              placeholder="+94 77 123 4567"
             />
           </div>
 
@@ -179,6 +259,7 @@ export default function Profile() {
               value={formData.address}
               onChange={handleChange}
               className="w-full p-2 border rounded-md"
+              placeholder="City, Country"
             />
           </div>
         </div>
@@ -186,7 +267,7 @@ export default function Profile() {
         <button
           type="submit"
           disabled={loading || uploading}
-          className="px-4 py-2 text-white transition bg-purple-700 rounded-md hover:bg-purple-800"
+          className="px-4 py-2 text-white transition bg-purple-700 rounded-md hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

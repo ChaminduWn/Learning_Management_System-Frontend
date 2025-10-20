@@ -8,6 +8,7 @@ export default function AdminDashboard() {
 
   
 const items = [
+    { key: "profile", label: "Profile", path: "/admin/dashboard/profile" },
     { key: "users", label: "Users", path: "/admin/dashboard/users" },
     { key: "course", label: "Course Approval", path: "/admin/dashboard/course" },
   ];

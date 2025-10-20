@@ -1,9 +1,13 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
-export default function Sidebar({ title = "Dashboard", items = [], active, onSelect, role = "default"}) {
-    const location = useLocation();
-
+export default function Sidebar({ title = "Dashboard", items = [], role = "default" }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
+      
     const roleColors = {
     admin: "bg-blue-700",        // Blue for admin
     instructor: "bg-purple-700", // Purple for instructor
@@ -30,27 +34,41 @@ export default function Sidebar({ title = "Dashboard", items = [], active, onSel
   const hoverColor = hoverColors[role] || hoverColors.default;
   const activeColor = activeColors[role] || activeColors.default;
 
+  const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+
 
   return (
     <div className={`w-64 min-h-screen p-6 text-white ${bgColor}`}>
       <h2 className="mb-6 text-2xl font-bold"> {title} </h2>
       <nav className="flex flex-col space-y-2">
-        {items.map((it) => {
-            const isActive = location.pathname === it.path;
-          return (
-        
-         <button
-              key={it.key}
-              onClick={() => onSelect(it)}
-              className={`text-left p-3 rounded transition ${
-                isActive ? activeColor : hoverColor
-              }`}
-            >
-              {it.label}
-            </button>
-          );
-        })}
+         {items.map((it) => (
+          <button
+            key={it.key}
+            onClick={() => navigate(it.path)}
+            className={`text-left p-3 rounded transition ${
+              isActive(it.path) ? activeColor : hoverColor
+            }`}
+          >
+            {it.label}
+          </button>
+        ))}
+      
       </nav>
+       <div className="mt-auto">
+        <button
+          onClick={handleLogout}
+          className={`w-full text-left p-3 rounded transition mt-6 ${hoverColor}`}
+        >
+          Logout
+        </button>
+      </div>
     </div>
+    
   );
 }

@@ -7,6 +7,7 @@ export default function InstructorDashboard() {
   const navigate = useNavigate();
   
   const items = [
+    { key: "profile", label: "Profile", path: "/instructor/dashboard/profile" },
     { key: "my-courses", label: "My Courses", path: "/instructor/dashboard/my-courses" },
     { key: "add", label: "Add Course", path: "/instructor/dashboard/add" },
   ];

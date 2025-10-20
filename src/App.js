@@ -16,15 +16,15 @@ import AdminUserManagement from "./components/AdminUserManagement";
 import EditCourse from "./pages/courses/EditCourse";
 import MyCourses from "./pages/courses/MyCourses";
 import AddCourse from "./pages/courses/AddCourse";
-import Profile from "./pages/Profile";
+import Profile from "./components/Profile";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
 function App() {
   return (
     
     <Router>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick
-        rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored"
+      <ToastContainer position="top-right" autoClose={900} hideProgressBar={false} newestOnTop={false} closeOnClick
+        rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" style={{ top: '80px' }}
       />
       
       <Routes>
@@ -57,6 +57,8 @@ function App() {
             </PrivateRoute>
           }
         >
+          <Route index element={<AdminUserManagement />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="users" element={<AdminUserManagement />} />
           <Route path="course" element={<AdminCourseApproval />} />
         </Route>
@@ -69,6 +71,7 @@ function App() {
             </PrivateRoute>
           }
         >
+          <Route path="profile" element={<Profile />} />
           <Route path="my-courses" element={<MyCourses />} />
           <Route path="add" element={<AddCourse />} />
           <Route path="edit-course/:id" element={<EditCourse />} />

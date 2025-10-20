@@ -1,35 +1,33 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Safe initialization from localStorage
-  const [user, setUser] = useState(() => {
-    try {
-      const saved = localStorage.getItem("user");
-      return saved ? JSON.parse(saved) : null;
-    } catch (err) {
-      console.error("Error parsing user from localStorage:", err);
-      localStorage.removeItem("user");
-      return null;
-    }
-  });
+  const [user, setUser] = useState(null);
 
-  // Login: store only the user object (without nested "user")
-  const login = (data) => {
-    if (data.user) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
-    } else {
-      localStorage.setItem("user", JSON.stringify(data));
-      setUser(data);
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("user");
+      }
     }
+  }, []);
+
+  // Login function - saves to both state and localStorage
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // Logout
+  // Logout function - clears both state and localStorage
   const logout = () => {
-    localStorage.removeItem("user");
     setUser(null);
+    localStorage.removeItem("user");
   };
 
   return (
