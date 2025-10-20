@@ -149,6 +149,12 @@ export default function EditCourse() {
           {loading ? "Updating..." : "Update Course"}
         </button>
       </form>
+      <button
+        onClick={() => navigate(`/instructor/dashboard/manage-content/${id}`)}
+        className="px-4 py-2 mt-4 text-white bg-purple-600 rounded"
+      >
+        Manage Course Content
+      </button>
     </div>
   );
 }

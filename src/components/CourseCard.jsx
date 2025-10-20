@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function CourseCard({ course, onDelete, onEdit }) {
+export default function CourseCard({ course, onDelete, onEdit, onManageContent }) {
   return (
     <div className="p-4 bg-white rounded shadow">
       <div className="flex items-start space-x-4">
@@ -22,8 +22,17 @@ export default function CourseCard({ course, onDelete, onEdit }) {
       </div>
 
       <div className="flex gap-2 mt-4">
-        <button onClick={() => onEdit && onEdit(course)} className="px-3 py-1 text-white bg-blue-600 rounded">Edit</button>
-        <button onClick={() => onDelete && onDelete(course._id)} className="px-3 py-1 text-white bg-red-600 rounded">Delete</button>
+        <button onClick={() => onEdit && onEdit(course)} className="px-3 py-1 text-white bg-blue-600 rounded">
+          Edit
+        </button>
+        
+        <button onClick={() => onDelete && onDelete(course._id)} className="px-3 py-1 text-white bg-red-600 rounded">
+          Delete
+        </button>
+
+        <button onClick={() => onManageContent && onManageContent(course)} className="px-3 py-1 text-white bg-purple-600 rounded" >
+          Manage Content
+        </button>
       </div>
     </div>
   );

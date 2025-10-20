@@ -66,14 +66,23 @@ export default function MyCourses() {
   navigate(`/instructor/dashboard/edit-course/${course._id}`);
 };
 
-
+const handleManageContent = (course) => {
+    navigate(`/instructor/dashboard/manage-content/${course._id}`);
+  };
+  
   return (
     <div className="p-6">
       <h1 className="mb-4 text-2xl font-bold text-purple-700">My Courses</h1>
       <div className="grid grid-cols-1 gap-4">
         {courses.length === 0 && <div className="text-gray-600">No courses yet.</div>}
         {courses.map(c => (
-          <CourseCard key={c._id} course={c} onDelete={handleDelete} onEdit={handleEdit} />
+          <CourseCard 
+          key={c._id} 
+          course={c} 
+          onDelete={handleDelete} 
+          onEdit={handleEdit}
+          onManageContent={handleManageContent}
+          />
         ))}
       </div>
 

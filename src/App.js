@@ -19,6 +19,7 @@ import AddCourse from "./pages/courses/AddCourse";
 import Profile from "./components/Profile";
 import Home from "./pages/Home";
 import Layout from "./components/Layout";
+import ManageCourseContent from "./pages/courses/ManageCourseContent";
 function App() {
   return (
     
@@ -75,6 +76,7 @@ function App() {
           <Route path="my-courses" element={<MyCourses />} />
           <Route path="add" element={<AddCourse />} />
           <Route path="edit-course/:id" element={<EditCourse />} />
+          <Route path="manage-content/:courseId" element={<ManageCourseContent />} />
         </Route>
 
         <Route
