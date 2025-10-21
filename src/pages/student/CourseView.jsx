@@ -11,16 +11,19 @@ export default function CourseView() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Fetching course with ID:", id); // Debug log
     fetchCourse();
   }, [id]);
 
   const fetchCourse = async () => {
     try {
+      console.log("Sending request with token:", user.token); // Debug log
       const res = await fetch(`http://localhost:5000/api/courses/${id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      console.log("API response:", data); // Debug log
+      if (!res.ok) throw new Error(data.message || "Failed to fetch course");
       if (!data.isEnrolled) {
         toast.error("You must enroll to view this course");
         navigate("/courses");
@@ -28,6 +31,7 @@ export default function CourseView() {
       }
       setCourse(data);
     } catch (err) {
+      console.error("Error in fetchCourse:", err); // Debug log
       toast.error(err.message);
       navigate("/courses");
     } finally {
@@ -50,7 +54,7 @@ export default function CourseView() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="p-6 text-center">Loading...</div>;
   if (!course) return null; // Redirect handled in fetchCourse
 
   return (
@@ -61,7 +65,7 @@ export default function CourseView() {
       {course.modules.map((mod) => {
         const isCompleted = course.completedModules.some((m) => m.toString() === mod._id);
         return (
-          <div key={mod._id} className="p-4 mb-6 border rounded">
+          <div key={mod._id} className="p-4 mb-6 border rounded shadow-sm">
             <h4 className="text-lg font-semibold">{mod.title}</h4>
             <p>{mod.description}</p>
 
@@ -73,14 +77,18 @@ export default function CourseView() {
                 {cont.type === "pdf" && (
                   <iframe src={cont.url} width="400" height="300" title="PDF"></iframe>
                 )}
-                {cont.type === "link" && <a href={cont.url} target="_blank">Open Link</a>}
+                {cont.type === "link" && (
+                  <a href={cont.url} target="_blank" rel="noopener noreferrer">
+                    Open Link
+                  </a>
+                )}
               </div>
             ))}
 
             <button
               onClick={() => handleMarkComplete(mod._id)}
               disabled={isCompleted}
-              className="px-4 py-2 mt-2 text-white bg-green-600 rounded disabled:opacity-50"
+              className="px-4 py-2 mt-4 text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
             >
               {isCompleted ? "Completed" : "Mark Complete"}
             </button>

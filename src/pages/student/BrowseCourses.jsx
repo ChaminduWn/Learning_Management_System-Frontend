@@ -57,20 +57,20 @@ export default function BrowseCourses() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="p-6 text-center">Loading...</div>;
 
   return (
     <div className="p-6">
       <h2 className="mb-4 text-2xl font-bold">Available Courses</h2>
-      <ul className="space-y-4">
+      <ul className="space-y-6">
         {courses.map((course) => (
-          <li key={course._id} className="p-4 border rounded">
+          <li key={course._id} className="p-4 bg-white border rounded shadow-sm">
             <h3 className="text-xl font-semibold">{course.title}</h3>
             <p className="text-gray-700">{course.description}</p>
-            <p className="mt-1 text-sm text-gray-600">Price: ${course.price}</p>
+            <p className="mt-1 text-sm text-gray-600">Price: Free</p>
             <button
               onClick={() => handleEnroll(course._id)}
-              className="px-4 py-2 mt-2 text-white bg-green-600 rounded hover:bg-green-700"
+              className="px-4 py-2 mt-4 text-white bg-green-600 rounded hover:bg-green-700"
             >
               Enroll
             </button>
