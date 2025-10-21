@@ -15,7 +15,9 @@ export default function BrowseCourses() {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/courses/approved");
+      const res = await fetch("http://localhost:5000/api/courses/approved", {
+        headers: user ? { Authorization: `Bearer ${user.token}` } : {},
+      });
       const data = await res.json();
 
       if (!Array.isArray(data)) {
@@ -31,11 +33,28 @@ export default function BrowseCourses() {
     }
   };
 
-  // Mock enroll function (no backend call yet)
-  const handleEnroll = (courseId) => {
-    toast.info("Enrollment feature coming soon!");
-    // Optional: navigate to a course preview or detail page
-    navigate(`/student/dashboard/course/${courseId}`);
+  const handleEnroll = async (courseId) => {
+    if (!user || user.role !== "Student") {
+      toast.error("Please log in as a student to enroll");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/enroll`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+      toast.success("Successfully enrolled!");
+      navigate(`/student/dashboard/course/${courseId}`);
+    } catch (err) {
+      toast.error(err.message);
+    }
   };
 
   if (loading) return <div>Loading...</div>;

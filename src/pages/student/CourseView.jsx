@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -8,6 +8,7 @@ export default function CourseView() {
   const { user } = useContext(AuthContext);
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCourse();
@@ -21,12 +22,14 @@ export default function CourseView() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       if (!data.isEnrolled) {
-        toast.error("Not enrolled");
-        // Redirect if not enrolled
+        toast.error("You must enroll to view this course");
+        navigate("/courses");
+        return;
       }
       setCourse(data);
     } catch (err) {
       toast.error(err.message);
+      navigate("/courses");
     } finally {
       setLoading(false);
     }
@@ -41,14 +44,14 @@ export default function CourseView() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       toast.success("Module completed");
-      fetchCourse(); // Refresh
+      fetchCourse(); // Refresh course data
     } catch (err) {
       toast.error(err.message);
     }
   };
 
   if (loading) return <div>Loading...</div>;
-  if (!course) return <div>Course not found</div>;
+  if (!course) return null; // Redirect handled in fetchCourse
 
   return (
     <div className="p-6">
