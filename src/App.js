@@ -22,6 +22,7 @@ import Layout from "./components/Layout";
 import ManageCourseContent from "./pages/courses/ManageCourseContent";
 import CourseView from "./pages/student/CourseView";
 import BrowseCourses from "./pages/student/BrowseCourses";
+import CertificateGenerator from "./pages/student/CertificateGenerator";
 function App() {
   return (
     
@@ -41,7 +42,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        <Route path="/courses" element={<BrowseCourses />} />      
+        <Route path="/courses" element={<BrowseCourses />} />    
+        <Route path="/student/dashboard/certificate/:id" element={<CertificateGenerator />} />
+
+  
         
 
          <Route
@@ -92,8 +96,10 @@ function App() {
             </PrivateRoute>
           }
         >
+          <Route path="profile" element={<Profile />} />
+          <Route path="course/:id" element={<CourseView />} />
 
-        <Route path="course/:id" element={<CourseView />} />
+
         </Route>
 
        

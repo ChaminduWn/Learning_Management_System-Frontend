@@ -83,6 +83,15 @@ export default function CourseView() {
       <h2 className="mb-4 text-2xl font-bold">{course.title}</h2>
       <p>Progress: {course.progress}%</p>
 
+      {course.progress === 100 && (
+        <button
+          onClick={() => navigate(`/student/dashboard/certificate/${id}`)}
+          className="px-4 py-2 mt-4 text-white bg-blue-600 rounded hover:bg-blue-700"
+        >
+          Collect Your Certificate
+        </button>
+      )}
+
       {course.modules.length === 0 ? (
         <p className="text-gray-600">No modules available for this course.</p>
       ) : (

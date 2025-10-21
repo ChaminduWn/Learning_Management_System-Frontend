@@ -42,6 +42,9 @@ export default function Header() {
 
   const dashboardInfo = getDashboardInfo();
 
+  // Show common navigation only for Students and non-logged-in users
+  const showCommonNav = !user || user.role === "Student";
+
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/courses", label: "Courses" },
@@ -55,20 +58,38 @@ export default function Header() {
         <span>LMS Platform</span>
       </Link>
 
-      {/* Navigation Tabs */}
-      <nav className="hidden gap-6 text-sm font-medium md:flex">
-        {navLinks.map((link) => (
+      {/* Navigation Tabs - Only show for Students and non-logged-in users */}
+      {showCommonNav && (
+        <nav className="hidden gap-6 text-sm font-medium md:flex">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`hover:underline transition ${
+                location.pathname === link.path ? "underline font-semibold" : ""
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+
+      {/* For Admin and Instructor - show direct dashboard link */}
+      {user && (user.role === "Admin" || user.role === "Instructor") && (
+        <nav className="hidden gap-6 text-sm font-medium md:flex">
           <Link
-            key={link.path}
-            to={link.path}
+            to={dashboardInfo.route}
             className={`hover:underline transition ${
-              location.pathname === link.path ? "underline font-semibold" : ""
+              location.pathname.startsWith(dashboardInfo.route.split('/').slice(0, 3).join('/')) 
+                ? "font-semibold" 
+                : ""
             }`}
           >
-            {link.label}
+            {dashboardInfo.label}
           </Link>
-        ))}
-      </nav>
+        </nav>
+      )}
 
       {user ? (
         <div className="relative">
