@@ -34,7 +34,7 @@ export default function Header() {
       case "Instructor":
         return { route: "/instructor/dashboard", label: "Dashboard" };
       case "Student":
-        return { route: "/student/dashboard", label: "Dashboard" };
+        return { route: "/profile", label: "Profile" };
       default:
         return { route: "/profile", label: "Profile" };
     }

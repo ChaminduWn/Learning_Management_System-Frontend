@@ -9,21 +9,21 @@ export default function Sidebar({ title = "Dashboard", items = [], role = "defau
   const { logout } = useContext(AuthContext);
       
     const roleColors = {
-    admin: "bg-blue-700",        // Blue for admin
+    admin: "bg-red-700",        // Blue for admin
     instructor: "bg-purple-700", // Purple for instructor
     student: "bg-green-700",     // Green for student
     default: "bg-gray-700",      // Fallback color
   };
 
   const hoverColors = {
-    admin: "hover:bg-blue-600",
+    admin: "hover:bg-red-600",
     instructor: "hover:bg-purple-600",
     student: "hover:bg-green-600",
     default: "hover:bg-gray-600",
   };
 
   const activeColors = {
-    admin: "bg-blue-900",
+    admin: "bg-red-900",
     instructor: "bg-purple-900",
     student: "bg-green-900",
     default: "bg-gray-900",

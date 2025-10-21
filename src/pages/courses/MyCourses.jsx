@@ -1,8 +1,15 @@
-import React, { useContext, useEffect, useRef, useState, useCallback} from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import { AuthContext } from "../../context/AuthContext";
 import CourseCard from "../../components/CourseCard";
 import NotificationModal from "../../components/NotificationModal";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function MyCourses() {
   const { user } = useContext(AuthContext);
@@ -10,8 +17,11 @@ export default function MyCourses() {
   const prevStatusRef = useRef({});
   const [notifications, setNotifications] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+const [courseToDelete, setCourseToDelete] = useState(null);
   const navigate = useNavigate();
 
+  
 
   const fetchCourses = useCallback(async () => {
     if (!user) return;
@@ -24,21 +34,29 @@ export default function MyCourses() {
 
       // detect status changes
       const newNotifs = [];
-      data.forEach(c => {
+      data.forEach((c) => {
         const prev = prevStatusRef.current[c._id];
         if (prev && prev !== c.status) {
           // status changed
           if (c.status === "Approved") {
-            newNotifs.push({ title: `Course Approved: ${c.title}`, body: "Your course was approved by Admin.", time: Date.now() });
+            newNotifs.push({
+              title: `Course Approved: ${c.title}`,
+              body: "Your course was approved by Admin.",
+              time: Date.now(),
+            });
           } else if (c.status === "Rejected") {
-            newNotifs.push({ title: `Course Rejected: ${c.title}`, body: `Reason: ${c.rejectReason || "N/A"}`, time: Date.now() });
+            newNotifs.push({
+              title: `Course Rejected: ${c.title}`,
+              body: `Reason: ${c.rejectReason || "N/A"}`,
+              time: Date.now(),
+            });
           }
         }
         prevStatusRef.current[c._id] = c.status;
       });
 
       if (newNotifs.length) {
-        setNotifications(prev => [...newNotifs, ...prev]);
+        setNotifications((prev) => [...newNotifs, ...prev]);
         setModalOpen(true);
       }
     } catch (err) {
@@ -53,40 +71,94 @@ export default function MyCourses() {
     return () => clearInterval(id);
   }, [fetchCourses]);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this course?")) return;
-    await fetch(`http://localhost:5000/api/courses/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
-    setCourses(prev => prev.filter(c => c._id !== id));
+  // const handleDelete = async (id) => {
+  //   if (!window.confirm("Delete this course?")) return;
+  //   await fetch(`http://localhost:5000/api/courses/${id}`, {
+  //     method: "DELETE",
+  //     headers: { Authorization: `Bearer ${user.token}` },
+  //   });
+  //   setCourses(prev => prev.filter(c => c._id !== id));
+  // };
+
+  const confirmDelete = (course) => {
+    setCourseToDelete(course);
+    setDeleteModalOpen(true);
+  };
+  const handleDelete = async () => {
+    if (!courseToDelete) return;
+    try {
+      await fetch(`http://localhost:5000/api/courses/${courseToDelete._id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setCourses((prev) => prev.filter((c) => c._id !== courseToDelete._id));
+          toast.success(`Course "${courseToDelete.title}" deleted successfully!`);
+
+      setDeleteModalOpen(false);
+      setCourseToDelete(null);
+    } catch (err) {
+      console.error(err);
+          toast.error("Failed to delete the course. Please try again.");
+
+      setDeleteModalOpen(false);
+    }
   };
 
   const handleEdit = (course) => {
-  navigate(`/instructor/dashboard/edit-course/${course._id}`);
-};
+    navigate(`/instructor/dashboard/edit-course/${course._id}`);
+  };
 
-const handleManageContent = (course) => {
+  const handleManageContent = (course) => {
     navigate(`/instructor/dashboard/manage-content/${course._id}`);
   };
-  
+
   return (
     <div className="p-6">
       <h1 className="mb-4 text-2xl font-bold text-purple-700">My Courses</h1>
       <div className="grid grid-cols-1 gap-4">
-        {courses.length === 0 && <div className="text-gray-600">No courses yet.</div>}
-        {courses.map(c => (
-          <CourseCard 
-          key={c._id} 
-          course={c} 
-          onDelete={handleDelete} 
-          onEdit={handleEdit}
-          onManageContent={handleManageContent}
+        {courses.length === 0 && (
+          <div className="text-gray-600">No courses yet.</div>
+        )}
+        {courses.map((c) => (
+          <CourseCard
+            key={c._id}
+            course={c}
+            onDelete={() => confirmDelete(c)}
+            onEdit={handleEdit}
+            onManageContent={handleManageContent}
           />
         ))}
       </div>
 
-      <NotificationModal open={modalOpen} onClose={() => setModalOpen(false)} messages={notifications} />
+      <NotificationModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        messages={notifications}
+      />
+
+      {deleteModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="w-full max-w-sm p-6 bg-white rounded shadow-lg">
+      <h2 className="mb-4 text-lg font-bold">Confirm Delete</h2>
+      <p className="mb-4">Are you sure you want to delete <strong>{courseToDelete?.title}</strong>?</p>
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => { setDeleteModalOpen(false); setCourseToDelete(null); }}
+          className="px-4 py-2 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleDelete}
+          className="px-4 py-2 text-white bg-red-600 rounded"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
+

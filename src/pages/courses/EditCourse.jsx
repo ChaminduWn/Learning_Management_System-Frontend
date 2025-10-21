@@ -7,6 +7,7 @@ export default function EditCourse() {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: "",
     moduleCode: "",
@@ -17,6 +18,8 @@ export default function EditCourse() {
     status: "",
   });
   const [loading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const categories = [
     "Programming & Development",
@@ -38,39 +41,105 @@ export default function EditCourse() {
         setForm(data);
       } catch (err) {
         toast.error(err.message);
-        
       }
     };
     fetchCourse();
   }, [id, user.token]);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // Frontend validation
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Title validation
+    if (name === "title") {
+      const wordCount = value.trim().split(/\s+/).length;
+      if (wordCount > 20) {
+        toast.warning("Title cannot exceed 20 words.");
+        return;
+      }
+      if (value.includes("\n")) {
+        toast.warning("Title should be one line only.");
+        return;
+      }
+    }
+
+    // Price validation
+    if (name === "price" && value && !/^\d*\.?\d*$/.test(value)) {
+      toast.warning("Price must contain only numbers.");
+      return;
+    }
+
+    setForm({ ...form, [name]: value });
+  };
+
+  // Upload thumbnail to Cloudinary
+  const uploadToCloudinary = async (file) => {
+    if (!file) return null;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "lms_uploads");
+    formData.append("folder", "lms_thumbnails");
+
+    try {
+      setUploadProgress(0);
+      const res = await fetch("https://api.cloudinary.com/v1_1/dnrq2pn3p/auto/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error("Thumbnail upload failed");
+
+      setUploadProgress(100);
+      setTimeout(() => setUploadProgress(0), 1000);
+      return data.secure_url;
+    } catch (err) {
+      toast.error("Thumbnail upload failed: " + err.message);
+      setUploadProgress(0);
+      return null;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.title.trim() || !form.description.trim()) {
+      toast.error("Title and description are required");
+      return;
+    }
+
     setLoading(true);
     try {
+      let imageUrl = form.thumbnail;
+
+      if (selectedFile) {
+        const uploadedUrl = await uploadToCloudinary(selectedFile);
+        if (!uploadedUrl) return;
+        imageUrl = uploadedUrl;
+      }
+
       const res = await fetch(`http://localhost:5000/api/courses/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, thumbnail: imageUrl }),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Error updating course");
 
       toast.success(
-  form.status === "Approved"
-    ? "Minor updates saved successfully."
-    : "Course updated successfully and pending admin re-approval."
-);
+        form.status === "Approved"
+          ? "Minor updates saved successfully."
+          : "Course updated successfully and pending admin re-approval."
+      );
 
       navigate("/instructor/dashboard/my-courses");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -130,13 +199,34 @@ export default function EditCourse() {
           placeholder="Price"
           className="w-full p-2 border rounded"
         />
-        <input
-          name="thumbnail"
-          value={form.thumbnail}
-          onChange={handleChange}
-          placeholder="Thumbnail URL"
-          className="w-full p-2 border rounded"
-        />
+        {/* Thumbnail file input */}
+        <div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setSelectedFile(e.target.files[0])}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500"
+          />
+          {selectedFile && (
+            <p className="mt-1 text-sm text-gray-600">Selected: {selectedFile.name}</p>
+          )}
+        </div>
+
+        {uploadProgress > 0 && (
+          <div className="mt-3">
+            <div className="flex justify-between mb-1 text-sm text-gray-700">
+              <span>Uploading Thumbnail...</span>
+              <span>{uploadProgress}%</span>
+            </div>
+            <div className="w-full h-2 bg-gray-200 rounded-full">
+              <div
+                className="h-2 transition-all duration-300 bg-green-600 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
         <textarea
           name="description"
           value={form.description}
