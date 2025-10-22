@@ -33,27 +33,33 @@ export default function BrowseCourses() {
     }
   };
 
-  const handleEnroll = async (courseId) => {
+  const handleEnroll = async (course) => {
     if (!user || user.role !== "Student") {
       toast.error("Please log in as a student to enroll");
       navigate("/login");
       return;
     }
 
-    try {
-      const res = await fetch(`http://localhost:5000/api/courses/${courseId}/enroll`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      toast.success("Successfully enrolled!");
-      navigate(`/student/dashboard/course/${courseId}`);
-    } catch (err) {
-      toast.error(err.message);
+    if (course.price === 0) {
+      // Direct enrollment for free courses
+      try {
+        const res = await fetch(`http://localhost:5000/api/courses/${course._id}/enroll`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        toast.success("Successfully enrolled!");
+        navigate(`/student/dashboard/course/${course._id}`);
+      } catch (err) {
+        toast.error(err.message);
+      }
+    } else {
+      // Navigate to payment page for non-free courses
+      navigate(`/payment/${course._id}`);
     }
   };
 
@@ -67,12 +73,14 @@ export default function BrowseCourses() {
           <li key={course._id} className="p-4 bg-white border rounded shadow-sm">
             <h3 className="text-xl font-semibold">{course.title}</h3>
             <p className="text-gray-700">{course.description}</p>
-            <p className="mt-1 text-sm text-gray-600">Price: Free</p>
+            <p className="mt-1 text-sm text-gray-600">
+              {course.price === 0 ? "Free" : `$${course.price}`}
+            </p>
             <button
-              onClick={() => handleEnroll(course._id)}
+              onClick={() => handleEnroll(course)}
               className="px-4 py-2 mt-4 text-white bg-green-600 rounded hover:bg-green-700"
             >
-              Enroll
+              {course.price === 0 ? "Enroll" : "Pay & Enroll"}
             </button>
           </li>
         ))}

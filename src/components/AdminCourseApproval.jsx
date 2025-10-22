@@ -216,7 +216,7 @@ export default function AdminCourseApproval() {
                 <p><strong>Module Code:</strong> {selectedCourse.moduleCode || "N/A"}</p>
                 <p><strong>Instructor:</strong> {selectedCourse.instructorId?.name || "Unknown"}</p>
                 <p><strong>Category:</strong> {selectedCourse.category || "N/A"}</p>
-                <p><strong>Price:</strong> ₹{selectedCourse.price?.toFixed(2) || "0.00"}</p>
+                <p><strong>Price:</strong> Rs. {selectedCourse.price?.toFixed(2) || "0.00"}</p>
                 <p><strong>Status:</strong> 
                   <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedCourse.status)}`}>
                     {selectedCourse.status || "Pending"}
