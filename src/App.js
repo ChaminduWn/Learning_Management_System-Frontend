@@ -23,6 +23,19 @@ import ManageCourseContent from "./pages/courses/ManageCourseContent";
 import CourseView from "./pages/student/CourseView";
 import BrowseCourses from "./pages/student/BrowseCourses";
 import CertificateGenerator from "./pages/student/CertificateGenerator";
+import Payment from "./pages/Payment";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
+const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+if (!stripeKey) {
+  console.error("Error: REACT_APP_STRIPE_PUBLISHABLE_KEY is not defined in .env");
+}
+export const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
+
+
 function App() {
   return (
     
@@ -53,6 +66,17 @@ function App() {
             element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            }
+          />
+          
+          <Route
+            path="/payment/:id"
+            element={
+              <PrivateRoute roles={["Student"]}>
+                <Elements stripe={stripePromise}>
+                  <Payment />
+                </Elements>
               </PrivateRoute>
             }
           />
@@ -98,6 +122,7 @@ function App() {
         >
           <Route path="profile" element={<Profile />} />
           <Route path="course/:id" element={<CourseView />} />
+          {/* <Route path="certificate/:id" element={<CertificateGenerator />} /> */}
 
 
         </Route>

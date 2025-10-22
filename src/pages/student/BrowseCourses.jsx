@@ -60,6 +60,7 @@ export default function BrowseCourses() {
     } else {
       // Navigate to payment page for non-free courses
       navigate(`/payment/${course._id}`);
+
     }
   };
 
@@ -74,7 +75,7 @@ export default function BrowseCourses() {
             <h3 className="text-xl font-semibold">{course.title}</h3>
             <p className="text-gray-700">{course.description}</p>
             <p className="mt-1 text-sm text-gray-600">
-              {course.price === 0 ? "Free" : `$${course.price}`}
+              {course.price === 0 ? "Free" : `Paid ($${course.price})`}
             </p>
             <button
               onClick={() => handleEnroll(course)}
