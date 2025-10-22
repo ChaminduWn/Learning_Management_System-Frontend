@@ -23,9 +23,9 @@ import ManageCourseContent from "./pages/courses/ManageCourseContent";
 import CourseView from "./pages/student/CourseView";
 import BrowseCourses from "./pages/student/BrowseCourses";
 import CertificateGenerator from "./pages/student/CertificateGenerator";
-import Payment from "./pages/Payment";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import Payment from "./pages/Payment";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -80,7 +80,7 @@ function App() {
               </PrivateRoute>
             }
           />
-        
+                
 
         {/* Protected routes */}
         <Route
