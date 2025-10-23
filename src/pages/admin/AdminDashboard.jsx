@@ -6,6 +6,7 @@ import { Bar, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 import { toast } from "react-toastify";
 
+// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 export default function AdminDashboard() {
@@ -27,13 +28,10 @@ export default function AdminDashboard() {
     { key: "profile", label: "Profile", path: "/admin/dashboard/profile" },
     { key: "users", label: "Users", path: "/admin/dashboard/users" },
     { key: "course", label: "Course Approval", path: "/admin/dashboard/course" },
-
     { key: "refund", label: "Refund", path: "/admin/dashboard/refund" },
     { key: "payments", label: "Payments", path: "/admin/dashboard/payments" },
-
   ];
 
-  // Check if we're on the main dashboard route
   const isMainDashboard = location.pathname === "/admin/dashboard";
 
   useEffect(() => {
@@ -46,11 +44,11 @@ export default function AdminDashboard() {
         if (!courseRes.ok) throw new Error((await courseRes.json()).message);
         const courses = await courseRes.json();
 
-        const approvedCourses = courses.filter(c => c.status === "Approved").length;
-        const pendingCourses = courses.filter(c => c.status === "Pending").length;
+        const approvedCourses = courses.filter((c) => c.status === "Approved").length;
+        const pendingCourses = courses.filter((c) => c.status === "Pending").length;
         const enrollmentsPerCourse = courses
-          .filter(c => c.status === "Approved")
-          .map(c => ({ label: c.title, enrollments: c.enrolledStudents.length }));
+          .filter((c) => c.status === "Approved")
+          .map((c) => ({ label: c.title, enrollments: c.enrolledStudents.length }));
 
         // Fetch users
         const userRes = await fetch("http://localhost:5000/api/auth", {
@@ -58,17 +56,17 @@ export default function AdminDashboard() {
         });
         if (!userRes.ok) throw new Error((await userRes.json()).message);
         const users = await userRes.json();
-        const students = users.filter(u => u.role === "Student");
-        const instructors = users.filter(u => u.role === "Instructor");
+        const students = users.filter((u) => u.role === "Student");
+        const instructors = users.filter((u) => u.role === "Instructor");
 
         setStats({
           approvedCourses,
           pendingCourses,
           enrollmentsPerCourse,
-          activeStudents: students.filter(u => u.isActive).length,
-          inactiveStudents: students.filter(u => !u.isActive).length,
-          activeInstructors: instructors.filter(u => u.isActive).length,
-          inactiveInstructors: instructors.filter(u => !u.isActive).length,
+          activeStudents: students.filter((u) => u.isActive).length,
+          inactiveStudents: students.filter((u) => !u.isActive).length,
+          activeInstructors: instructors.filter((u) => u.isActive).length,
+          inactiveInstructors: instructors.filter((u) => !u.isActive).length,
         });
       } catch (err) {
         toast.error(err.message || "Failed to fetch dashboard data");
@@ -93,11 +91,11 @@ export default function AdminDashboard() {
   };
 
   const enrollmentData = {
-    labels: stats.enrollmentsPerCourse.map(c => c.label),
+    labels: stats.enrollmentsPerCourse.map((c) => c.label),
     datasets: [
       {
         label: "Enrollments",
-        data: stats.enrollmentsPerCourse.map(c => c.enrollments),
+        data: stats.enrollmentsPerCourse.map((c) => c.enrollments),
         backgroundColor: "#FF6384",
       },
     ],
@@ -130,8 +128,7 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 p-6 bg-gray-100">
-        {/* Show main dashboard charts only on dashboard root */}
-        {isMainDashboard && (
+        {isMainDashboard ? (
           <>
             <h2 className="mb-6 text-2xl font-bold text-red-700">Admin Dashboard</h2>
             <div className="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
@@ -157,10 +154,9 @@ export default function AdminDashboard() {
               </div>
             </div>
           </>
+        ) : (
+          <Outlet />
         )}
-
-        {/* Nested Routes */}
-        <Outlet />
       </div>
     </div>
   );
