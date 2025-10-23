@@ -26,6 +26,7 @@ import CertificateGenerator from "./pages/student/CertificateGenerator";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Payment from "./pages/Payment";
+import AdminRefundManagement from "./components/AdminRefundManagement";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -95,6 +96,9 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="users" element={<AdminUserManagement />} />
           <Route path="course" element={<AdminCourseApproval />} />
+          <Route path="refund" element={<AdminRefundManagement />} />
+
+          
         </Route>
 
         <Route

@@ -27,6 +27,9 @@ export default function AdminDashboard() {
     { key: "profile", label: "Profile", path: "/admin/dashboard/profile" },
     { key: "users", label: "Users", path: "/admin/dashboard/users" },
     { key: "course", label: "Course Approval", path: "/admin/dashboard/course" },
+
+    { key: "refund", label: "Refund", path: "/admin/dashboard/refund" },
+
   ];
 
   // Check if we're on the main dashboard route
