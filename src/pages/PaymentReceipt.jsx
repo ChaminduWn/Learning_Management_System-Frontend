@@ -238,7 +238,7 @@ export default function PaymentReceipt() {
           </div>
         </div>
 
-        {/* Additional Info - Don't print this */}
+       
         <div className="p-4 mt-6 border border-blue-200 rounded-lg bg-blue-50 print:hidden">
           <p className="text-sm text-blue-800">
             <strong>Note:</strong> If you need to refund this payment, please

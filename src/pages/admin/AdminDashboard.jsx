@@ -3,25 +3,45 @@ import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import Sidebar from "../../components/Sidebar";
 import { Bar, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from "chart.js";
 import { toast } from "react-toastify";
+import { FaDollarSign, FaReceipt, FaUserShield, FaTimesCircle } from "react-icons/fa";
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 export default function AdminDashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+
   const [stats, setStats] = useState({
     approvedCourses: 0,
     pendingCourses: 0,
+    rejectedCourses: 0,
     enrollmentsPerCourse: [],
-    activeStudents: 0,
-    inactiveStudents: 0,
-    activeInstructors: 0,
-    inactiveInstructors: 0,
+    totalStudents: 0,
+    totalInstructors: 0,
+    totalAdmins: 0,
   });
+
+  const [paymentStats, setPaymentStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const items = [
@@ -30,44 +50,59 @@ export default function AdminDashboard() {
     { key: "course", label: "Course Approval", path: "/admin/dashboard/course" },
     { key: "refund", label: "Refund", path: "/admin/dashboard/refund" },
     { key: "payments", label: "Payments", path: "/admin/dashboard/payments" },
+    
+    
   ];
 
   const isMainDashboard = location.pathname === "/admin/dashboard";
 
   useEffect(() => {
+    if (!user?.token) return;
     const fetchStats = async () => {
       try {
-        // Fetch courses
+        // --- FETCH COURSES ---
         const courseRes = await fetch("http://localhost:5000/api/courses", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        if (!courseRes.ok) throw new Error((await courseRes.json()).message);
         const courses = await courseRes.json();
-
         const approvedCourses = courses.filter((c) => c.status === "Approved").length;
         const pendingCourses = courses.filter((c) => c.status === "Pending").length;
+        const rejectedCourses = courses.filter((c) => c.status === "Rejected").length;
+
         const enrollmentsPerCourse = courses
           .filter((c) => c.status === "Approved")
-          .map((c) => ({ label: c.title, enrollments: c.enrolledStudents.length }));
+          .map((c) => ({
+            label: c.title?.length > 10 ? c.title.slice(0, 10) + "..." : c.title,
+            enrollments: c.enrolledStudents?.length || 0,
+          }));
 
-        // Fetch users
+        // --- FETCH USERS ---
         const userRes = await fetch("http://localhost:5000/api/auth", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        if (!userRes.ok) throw new Error((await userRes.json()).message);
         const users = await userRes.json();
-        const students = users.filter((u) => u.role === "Student");
-        const instructors = users.filter((u) => u.role === "Instructor");
+        const totalStudents = users.filter((u) => u.role === "Student").length;
+        const totalInstructors = users.filter((u) => u.role === "Instructor").length;
+        const totalAdmins = users.filter((u) => u.role === "Admin").length;
+
+        // --- FETCH PAYMENT STATS ---
+        const payStatsRes = await fetch("http://localhost:5000/api/payments/stats", {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const payData = await payStatsRes.json();
+        if (!payStatsRes.ok) throw new Error(payData.message || "Failed to load payment stats");
 
         setStats({
           approvedCourses,
           pendingCourses,
+          rejectedCourses,
           enrollmentsPerCourse,
-          activeStudents: students.filter((u) => u.isActive).length,
-          inactiveStudents: students.filter((u) => !u.isActive).length,
-          activeInstructors: instructors.filter((u) => u.isActive).length,
-          inactiveInstructors: instructors.filter((u) => !u.isActive).length,
+          totalStudents,
+          totalInstructors,
+          totalAdmins,
         });
+
+        setPaymentStats(payData);
       } catch (err) {
         toast.error(err.message || "Failed to fetch dashboard data");
       } finally {
@@ -75,17 +110,21 @@ export default function AdminDashboard() {
       }
     };
 
-    if (user && user.token) fetchStats();
+    fetchStats();
   }, [user]);
 
-  // Chart data
+  const chartOptions = {
+    maintainAspectRatio: false,
+    plugins: { legend: { position: "top" } },
+  };
+
   const courseStatusData = {
-    labels: ["Approved Courses", "Pending Courses"],
+    labels: ["Approved", "Pending", "Rejected"],
     datasets: [
       {
-        label: "Course Status",
-        data: [stats.approvedCourses, stats.pendingCourses],
-        backgroundColor: ["#36A2EB", "#FFCE56"],
+        label: "Courses",
+        data: [stats.approvedCourses, stats.pendingCourses, stats.rejectedCourses],
+        backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
       },
     ],
   };
@@ -102,52 +141,163 @@ export default function AdminDashboard() {
   };
 
   const userData = {
-    labels: ["Active Students", "Inactive Students", "Active Instructors", "Inactive Instructors"],
+    labels: ["Students", "Instructors", "Admins"],
     datasets: [
       {
-        label: "User Statistics",
-        data: [
-          stats.activeStudents,
-          stats.inactiveStudents,
-          stats.activeInstructors,
-          stats.inactiveInstructors,
-        ],
-        backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384", "#4BC0C0"],
+        label: "User Count",
+        data: [stats.totalStudents, stats.totalInstructors, stats.totalAdmins],
+        backgroundColor: ["#36A2EB", "#FF6384", "#4BC0C0"],
       },
     ],
   };
 
-  const chartOptions = { maintainAspectRatio: false, plugins: { legend: { position: "top" } } };
-
-  if (loading) return <div className="p-6 text-center">Loading dashboard...</div>;
+  if (loading)
+    return <div className="p-6 text-center">Loading dashboard...</div>;
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <Sidebar title="Admin Panel 🛠️" items={items} onSelect={(item) => navigate(item.path)} role="admin" />
+      <Sidebar
+        title="Admin Panel 🛠️"
+        items={items}
+        onSelect={(item) => navigate(item.path)}
+        role="admin"
+      />
 
-      {/* Main Content */}
       <div className="flex-1 p-6 bg-gray-100">
         {isMainDashboard ? (
           <>
-            <h2 className="mb-6 text-2xl font-bold text-red-700">Admin Dashboard</h2>
+            <h2 className="mb-6 text-2xl font-bold text-purple-700">
+              Admin Dashboard
+            </h2>
+
+            {/* --- KEY STATS --- */}
+            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-2 lg:grid-cols-4">
+              <div className="p-4 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700">
+                  Approved Courses
+                </h3>
+                <p className="text-2xl font-bold">{stats.approvedCourses}</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700">
+                  Pending Courses
+                </h3>
+                <p className="text-2xl font-bold">{stats.pendingCourses}</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700">
+                  Total Students
+                </h3>
+                <p className="text-2xl font-bold">{stats.totalStudents}</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700">
+                  Total Instructors
+                </h3>
+                <p className="text-2xl font-bold">{stats.totalInstructors}</p>
+              </div>
+            </div>
+
+            {/* --- TOTAL REVENUE, TOTAL PAYMENTS, ADMIN COUNT, REJECTED COURSES --- */}
+            {paymentStats && (
+              <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
+                <div className="p-6 transition-shadow duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      
+                      <h3 className="text-xl font-semibold text-gray-800">
+                         Total Revenue (LKR)
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="mb-2 text-3xl font-bold text-green-600">
+                     {paymentStats.totalRevenue.toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    From completed payments
+                  </p>
+                </div>
+
+                <div className="p-6 transition-shadow duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <FaReceipt className="text-3xl text-blue-500" />
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        Total Payments
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="mb-2 text-3xl font-bold text-blue-600">
+                    {paymentStats.totalPayments}
+                  </p>
+                  <p className="text-sm text-gray-600">All transactions</p>
+                </div>
+
+                <div className="p-6 transition-shadow duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <FaUserShield className="text-3xl text-purple-500" />
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        Total Admins
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="mb-2 text-3xl font-bold text-purple-600">
+                    {stats.totalAdmins}
+                  </p>
+                  <p className="text-sm text-gray-600">All admin users</p>
+                </div>
+
+                <div className="p-6 transition-shadow duration-300 bg-white rounded-lg shadow-md hover:shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <FaTimesCircle className="text-3xl text-red-500" />
+                      <h3 className="text-xl font-semibold text-gray-800">
+                        Rejected Courses
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="mb-2 text-3xl font-bold text-red-600">
+                    {stats.rejectedCourses}
+                  </p>
+                  <p className="text-sm text-gray-600">Courses not approved</p>
+                </div>
+              </div>
+            )}
+
+            {/* --- CHARTS --- */}
             <div className="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
+              {/* Course Status */}
               <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="mb-4 text-lg font-semibold text-gray-700">Course Status</h3>
+                <h3 className="mb-4 text-lg font-semibold text-gray-700">
+                  Course Status
+                </h3>
                 <div style={{ height: "250px" }}>
                   <Doughnut data={courseStatusData} options={chartOptions} />
                 </div>
               </div>
 
+              {/* Enrollments */}
               <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="mb-4 text-lg font-semibold text-gray-700">Enrollments per Course</h3>
+                <h3 className="mb-4 text-lg font-semibold text-gray-700">
+                  Enrollments per Course
+                </h3>
                 <div style={{ height: "250px" }}>
-                  <Bar data={enrollmentData} options={chartOptions} />
+                  {stats.enrollmentsPerCourse.length === 0 ? (
+                    <p className="text-center text-gray-500">
+                      No enrollment data available
+                    </p>
+                  ) : (
+                    <Bar data={enrollmentData} options={chartOptions} />
+                  )}
                 </div>
               </div>
 
+              {/* Users */}
               <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="mb-4 text-lg font-semibold text-gray-700">User Statistics</h3>
+                <h3 className="mb-4 text-lg font-semibold text-gray-700">
+                  User Statistics
+                </h3>
                 <div style={{ height: "250px" }}>
                   <Bar data={userData} options={chartOptions} />
                 </div>

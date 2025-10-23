@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom"; // Added for navigation
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import {
@@ -13,6 +14,7 @@ export default function AdminPayments() {
   const { user } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Initialize navigate hook
 
   useEffect(() => {
     fetchStats();
@@ -48,10 +50,8 @@ export default function AdminPayments() {
   const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <div
-          className={`p-3 rounded-lg ${color} bg-opacity-10`}
-        >
-          <Icon className={`text-2xl ${color.replace('bg-', 'text-')}`} />
+        <div className={`p-3 rounded-lg ${color} bg-opacity-10`}>
+          <Icon className={`text-2xl ${color.replace("bg-", "text-")}`} />
         </div>
       </div>
       <h3 className="mb-1 text-sm font-medium text-gray-600">{title}</h3>
@@ -248,7 +248,7 @@ export default function AdminPayments() {
           <h2 className="mb-4 text-xl font-bold text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <button
-              onClick={() => window.location.href = "/admin/payments"}
+              onClick={() => navigate("/admin/payment/all")} // Updated to use navigate
               className="px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
             >
               View All Payments

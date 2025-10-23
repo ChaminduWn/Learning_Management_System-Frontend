@@ -80,6 +80,7 @@ export default function CourseView() {
   console.log("CourseView: Rendering course:", course.title);
   return (
     <div className="p-6">
+      
       <h2 className="mb-4 text-2xl font-bold">{course.title}</h2>
       <div className="flex items-center justify-end gap-4 mb-4">
         <p>Progress: {course.progress}%</p>
@@ -92,6 +93,7 @@ export default function CourseView() {
           </button>
         )}
       </div>
+      
 
       {course.modules.length === 0 ? (
         <p className="text-gray-600">No modules available for this course.</p>
