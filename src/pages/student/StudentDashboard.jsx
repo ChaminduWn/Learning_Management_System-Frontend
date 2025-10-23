@@ -54,6 +54,7 @@ export default function StudentDashboard() {
   const items = [
     { key: "profile", label: "Profile", path: "/student/dashboard/profile" },
     { key: "enrolled", label: "Enrolled Courses", path: "/student/dashboard" },
+    { key: "payments", label: "Payment History", path: "/student/dashboard/payments" },
   ];
 
   return (
@@ -62,10 +63,7 @@ export default function StudentDashboard() {
       <div className="flex-1 p-6 bg-gray-100">
         {location.pathname === "/student/dashboard" ? (
           <>
-            <h2 className="mb-4 text-2xl font-bold text-green-700">
-              Welcome, Student 📚
-            </h2>
-            
+                        
             <h3 className="mb-4 text-xl font-semibold">Completed Courses</h3>
             {completedCourses.length === 0 ? (
               <p>No completed courses yet.</p>

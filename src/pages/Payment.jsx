@@ -8,16 +8,74 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { stripePromise } from "../App"; 
+import { stripePromise } from "../App";
+import { FaCheckCircle, FaReceipt } from "react-icons/fa";
+
+// Payment Success Modal
+function PaymentSuccessModal({ payment, course, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="w-full max-w-md p-8 mx-4 bg-white rounded-lg shadow-xl">
+        <div className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
+              <FaCheckCircle className="text-4xl text-green-600" />
+            </div>
+          </div>
+          <h2 className="mb-2 text-2xl font-bold text-gray-800">
+            Payment Successful!
+          </h2>
+          <p className="mb-6 text-gray-600">
+            You've been enrolled in the course
+          </p>
+
+          <div className="p-6 mb-6 border-2 border-green-200 rounded-lg bg-green-50">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <FaReceipt className="text-green-600" />
+              <span className="text-sm font-medium text-gray-600">
+                Payment Token
+              </span>
+            </div>
+            <div className="p-3 mb-3 font-mono text-3xl font-bold text-green-700 bg-white rounded-lg">
+              #{payment.tokenNumber}
+            </div>
+            <p className="text-xs text-gray-600">
+              Save this token for your records
+            </p>
+          </div>
+
+          <div className="p-4 mb-6 text-left rounded-lg bg-gray-50">
+            <h3 className="mb-2 font-semibold text-gray-700">Course Details</h3>
+            <p className="text-sm text-gray-600">{course.title}</p>
+            <p className="text-xs text-gray-500">{course.moduleCode}</p>
+            <div className="flex items-center justify-between pt-3 mt-3 border-t">
+              <span className="text-sm text-gray-600">Amount Paid</span>
+              <span className="font-bold text-green-600">
+                ${payment.amount.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-full px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            Go to Course
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Payment Form Component
-// ==========================
 function PaymentForm({ clientSecret, course }) {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(null);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -44,7 +102,7 @@ function PaymentForm({ clientSecret, course }) {
       if (error) throw new Error(error.message);
 
       if (paymentIntent.status === "succeeded") {
-        // Record payment in backend (which also enrolls the student)
+        // Process payment in backend
         const res = await fetch("http://localhost:5000/api/payments/process", {
           method: "POST",
           headers: {
@@ -61,72 +119,80 @@ function PaymentForm({ clientSecret, course }) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
 
-        toast.success("Payment successful! Redirecting to course...");
-
-        // No need to call /enroll here—backend already did it
-        setTimeout(() => {
-          navigate(`/student/dashboard/course/${course._id}`);
-        }, 1500);
+        // Show success modal with token
+        setPaymentSuccess(data);
+        toast.success("Payment successful!");
       }
     } catch (err) {
       toast.error(err.message || "Payment failed. Please try again.");
-      console.error("Payment error:", err); // Log for debugging
     } finally {
       setProcessing(false);
     }
   };
 
-  return (
-    <form onSubmit={handlePayment}>
-      <div className="mb-4">
-        <label className="block mb-2 text-sm font-medium text-gray-700">
-          Card Details
-        </label>
-        <div className="p-3 border rounded-lg">
-          <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: "16px",
-                  color: "#424770",
-                  "::placeholder": { color: "#aab7c4" },
-                },
-                invalid: { color: "#9e2146" },
-              },
-            }}
-          />
-        </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Test card: 4242 4242 4242 4242 | Exp: 12/34 | CVV: 123
-        </p>
-      </div>
+  const handleSuccessClose = () => {
+    navigate(`/student/dashboard/course/${course._id}`);
+  };
 
-      <div className="flex gap-4 mt-6">
-        <button
-          type="button"
-          onClick={() => navigate("/courses")}
-          className="flex-1 px-6 py-3 font-medium text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
-          disabled={processing}
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="flex-1 px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-          disabled={processing || !stripe || !elements}
-        >
-          {processing ? "Processing..." : `Pay $${course.price}`}
-        </button>
-      </div>
-    </form>
+  return (
+    <>
+      <form onSubmit={handlePayment}>
+        <div className="mb-4">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
+            Card Details
+          </label>
+          <div className="p-3 border rounded-lg">
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: "16px",
+                    color: "#424770",
+                    "::placeholder": { color: "#aab7c4" },
+                  },
+                  invalid: { color: "#9e2146" },
+                },
+              }}
+            />
+          </div>
+          <p className="mt-1 text-xs text-gray-500">
+            Test card: 4242 4242 4242 4242 | Exp: 12/34 | CVV: 123
+          </p>
+        </div>
+
+        <div className="flex gap-4 mt-6">
+          <button
+            type="button"
+            onClick={() => navigate("/courses")}
+            className="flex-1 px-6 py-3 font-medium text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
+            disabled={processing}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="flex-1 px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={processing || !stripe || !elements}
+          >
+            {processing ? "Processing..." : `Pay $${course.price}`}
+          </button>
+        </div>
+      </form>
+
+      {paymentSuccess && (
+        <PaymentSuccessModal
+          payment={paymentSuccess.payment}
+          course={paymentSuccess.course}
+          onClose={handleSuccessClose}
+        />
+      )}
+    </>
   );
 }
 
-// ==========================
 // Main Payment Page
-// ==========================
 export default function Payment() {
-  const { id: courseId } = useParams(); // ✅ Fixed param name
+  const { id: courseId } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
@@ -136,7 +202,6 @@ export default function Payment() {
   useEffect(() => {
     const fetchCourseAndIntent = async () => {
       try {
-        // Fetch course details
         const courseRes = await fetch(
           `http://localhost:5000/api/courses/${courseId}`,
           {
@@ -146,7 +211,6 @@ export default function Payment() {
         const courseData = await courseRes.json();
         if (!courseRes.ok) throw new Error(courseData.message);
 
-        // Redirect if free course
         if (courseData.price === 0) {
           toast.info("This is a free course!");
           navigate("/courses");
@@ -155,7 +219,6 @@ export default function Payment() {
 
         setCourse(courseData);
 
-        // Create payment intent
         const intentRes = await fetch(
           "http://localhost:5000/api/payments/create-intent",
           {

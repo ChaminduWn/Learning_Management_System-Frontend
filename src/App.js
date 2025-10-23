@@ -27,6 +27,9 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Payment from "./pages/Payment";
 import AdminRefundManagement from "./components/AdminRefundManagement";
+import AdminPayments from "./pages/AdminPayments";
+import StudentPaymentHistory from "./pages/StudentPaymentHistory";
+import PaymentReceipt from "./pages/PaymentReceipt";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -58,6 +61,13 @@ function App() {
 
         <Route path="/courses" element={<BrowseCourses />} />    
         <Route path="/student/dashboard/certificate/:id" element={<CertificateGenerator />} />
+
+        <Route path="payments/receipt/:id" element={<PaymentReceipt />} />
+
+          
+
+
+        
 
   
         
@@ -97,6 +107,7 @@ function App() {
           <Route path="users" element={<AdminUserManagement />} />
           <Route path="course" element={<AdminCourseApproval />} />
           <Route path="refund" element={<AdminRefundManagement />} />
+          <Route path="payments" element={<AdminPayments />} />  
 
           
         </Route>
@@ -126,9 +137,9 @@ function App() {
         >
           <Route path="profile" element={<Profile />} />
           <Route path="course/:id" element={<CourseView />} />
-          {/* <Route path="certificate/:id" element={<CertificateGenerator />} /> */}
-
-
+          <Route path="payments" element={<StudentPaymentHistory />} /> 
+          <Route path="payments/receipt/:id" element={<PaymentReceipt />} />
+          
         </Route>
 
        
