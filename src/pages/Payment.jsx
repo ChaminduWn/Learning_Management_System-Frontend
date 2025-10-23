@@ -44,7 +44,7 @@ function PaymentForm({ clientSecret, course }) {
       if (error) throw new Error(error.message);
 
       if (paymentIntent.status === "succeeded") {
-        // Step 1️⃣: Record payment in backend
+        // Record payment in backend (which also enrolls the student)
         const res = await fetch("http://localhost:5000/api/payments/process", {
           method: "POST",
           headers: {
@@ -61,31 +61,16 @@ function PaymentForm({ clientSecret, course }) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message);
 
-        toast.success("Payment successful! Enrolling you in the course...");
+        toast.success("Payment successful! Redirecting to course...");
 
-        // Step 2️⃣: Automatically enroll the student after payment
-        const enrollRes = await fetch(
-          `http://localhost:5000/api/courses/${course._id}/enroll`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const enrollData = await enrollRes.json();
-        if (!enrollRes.ok)
-          throw new Error(enrollData.message || "Enrollment failed");
-
-        // Step 3️⃣: Redirect to the course content
+        // No need to call /enroll here—backend already did it
         setTimeout(() => {
           navigate(`/student/dashboard/course/${course._id}`);
         }, 1500);
       }
     } catch (err) {
       toast.error(err.message || "Payment failed. Please try again.");
+      console.error("Payment error:", err); // Log for debugging
     } finally {
       setProcessing(false);
     }
