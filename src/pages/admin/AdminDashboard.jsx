@@ -50,6 +50,8 @@ export default function AdminDashboard() {
     { key: "course", label: "Course Approval", path: "/admin/dashboard/course" },
     { key: "refund", label: "Refund", path: "/admin/dashboard/refund" },
     { key: "payments", label: "Payments", path: "/admin/dashboard/payments" },
+    { key: "contacts", label: "Contact Messages", path: "/admin/dashboard/contacts",},
+
     
     
   ];

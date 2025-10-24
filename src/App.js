@@ -31,6 +31,9 @@ import AdminPayments from "./components/AdminPayments";
 import StudentPaymentHistory from "./pages/student/StudentPaymentHistory";
 import PaymentReceipt from "./pages/PaymentReceipt";
 import AllPayments from "./components/AllPayments";
+import ContactUs from "./pages/ContactUs";
+import AdminContacts from "./components/AdminContacts";
+import AdminContactDetail from "./components/AdminContactDetail";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -61,21 +64,16 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         <Route path="/courses" element={<BrowseCourses />} />    
+
+        <Route path="/contact" element={<ContactUs/>} />    
+        
         <Route path="/student/dashboard/certificate/:id" element={<CertificateGenerator />} />
 
         <Route path="payments/receipt/:id" element={<PaymentReceipt />} />
 
         <Route path="/admin/payment/all" element={<AllPayments />} /> 
 
-
-          
-
-
         
-
-  
-        
-
          <Route
             path="/profile"
             element={
@@ -112,6 +110,9 @@ function App() {
           <Route path="course" element={<AdminCourseApproval />} />
           <Route path="refund" element={<AdminRefundManagement />} />
           <Route path="payments" element={<AdminPayments />} />  
+          <Route path="contacts" element={<AdminContacts />} />
+  <Route path="contacts/:id" element={<AdminContactDetail />} />
+          
           
 
           
@@ -144,6 +145,7 @@ function App() {
           <Route path="course/:id" element={<CourseView />} />
           <Route path="payments" element={<StudentPaymentHistory />} /> 
           <Route path="payments/receipt/:id" element={<PaymentReceipt />} />
+          
           
         </Route>
 

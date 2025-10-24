@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom"; // Added for navigation
+import { useNavigate } from "react-router-dom"; 
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import {
@@ -14,7 +14,7 @@ export default function AdminPayments() {
   const { user } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Initialize navigate hook
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     fetchStats();
@@ -248,7 +248,7 @@ export default function AdminPayments() {
           <h2 className="mb-4 text-xl font-bold text-gray-800">Quick Actions</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <button
-              onClick={() => navigate("/admin/payment/all")} // Updated to use navigate
+              onClick={() => navigate("/admin/payment/all")} 
               className="px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
             >
               View All Payments
