@@ -109,10 +109,14 @@ export default function ContactPage() {
                 <p className="mb-2 text-gray-700">
                   Chat with us instantly — average response in <strong className="text-emerald-600">2 minutes</strong>.
                 </p>
-                <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-md hover:scale-105">
+                <button 
+                onClick={() => navigate("/feedback")}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition-all rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:shadow-md hover:scale-105">
                   <MessageSquare size={16} />
-                  Start Chat
+                  Request Support
                 </button>
+                            
+                          
               </div>
             </div>
           </div>

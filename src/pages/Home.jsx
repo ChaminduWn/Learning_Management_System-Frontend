@@ -26,9 +26,9 @@ const Home = () => {
     day === today.getDate();
 
   const events = {
-    // 5: { title: "Math Quiz", type: "exam" },
-    // 12: { title: "Project Submission", type: "assignment" },
-    // 20: { title: "Guest Lecture", type: "event" },
+    5: { title: "Math Quiz", type: "exam" },
+    12: { title: "Project Submission", type: "assignment" },
+    20: { title: "Guest Lecture", type: "event" },
   };
 
   return (
