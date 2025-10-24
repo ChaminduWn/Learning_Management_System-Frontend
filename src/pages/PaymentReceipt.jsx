@@ -29,7 +29,7 @@ export default function PaymentReceipt() {
       setPayment(data);
     } catch (err) {
       toast.error(err.message || "Failed to fetch payment details");
-      navigate("/student/payments");
+      navigate("/student/dashboard/payments");
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ export default function PaymentReceipt() {
         {/* Action Buttons - Don't print these */}
         <div className="flex gap-4 mb-6 print:hidden">
           <button
-            onClick={() => navigate("/student/payments")}
+            onClick={() => navigate("/student/dashboard/payments")}
             className="inline-flex items-center gap-2 px-4 py-2 text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <FaArrowLeft /> Back to Payments

@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import { BookOpen, Tag, DollarSign, Image, FileText, Loader2, Edit3, AlertCircle } from "lucide-react";
 
 export default function EditCourse() {
   const { user } = useContext(AuthContext);
@@ -29,7 +31,6 @@ export default function EditCourse() {
     "Personal Development",
   ];
 
-  // Fetch course details
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -46,11 +47,9 @@ export default function EditCourse() {
     fetchCourse();
   }, [id, user.token]);
 
-  // Frontend validation
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Title validation
     if (name === "title") {
       const wordCount = value.trim().split(/\s+/).length;
       if (wordCount > 20) {
@@ -63,7 +62,6 @@ export default function EditCourse() {
       }
     }
 
-    // Price validation
     if (name === "price" && value && !/^\d*\.?\d*$/.test(value)) {
       toast.warning("Price must contain only numbers.");
       return;
@@ -72,7 +70,6 @@ export default function EditCourse() {
     setForm({ ...form, [name]: value });
   };
 
-  // Upload thumbnail to Cloudinary
   const uploadToCloudinary = async (file) => {
     if (!file) return null;
 
@@ -81,24 +78,19 @@ export default function EditCourse() {
     formData.append("upload_preset", "lms_uploads");
     formData.append("folder", "lms_thumbnails");
 
-    try {
-      setUploadProgress(0);
-      const res = await fetch("https://api.cloudinary.com/v1_1/dnrq2pn3p/auto/upload", {
-        method: "POST",
-        body: formData,
-      });
+    setUploadProgress(10);
+    const res = await fetch("https://api.cloudinary.com/v1_1/dnrq2pn3p/auto/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error("Thumbnail upload failed");
+    setUploadProgress(70);
+    if (!res.ok) throw new Error("Thumbnail upload failed");
 
-      setUploadProgress(100);
-      setTimeout(() => setUploadProgress(0), 1000);
-      return data.secure_url;
-    } catch (err) {
-      toast.error("Thumbnail upload failed: " + err.message);
-      setUploadProgress(0);
-      return null;
-    }
+    const data = await res.json();
+    setUploadProgress(100);
+    setTimeout(() => setUploadProgress(0), 1000);
+    return data.secure_url;
   };
 
   const handleSubmit = async (e) => {
@@ -112,7 +104,6 @@ export default function EditCourse() {
     setLoading(true);
     try {
       let imageUrl = form.thumbnail;
-
       if (selectedFile) {
         const uploadedUrl = await uploadToCloudinary(selectedFile);
         if (!uploadedUrl) return;
@@ -148,106 +139,181 @@ export default function EditCourse() {
   const isApproved = form.status === "Approved";
 
   return (
-    <div className="max-w-2xl p-6 bg-white rounded shadow">
-      <h2 className="mb-4 text-2xl font-bold text-purple-700">Edit Course</h2>
-      {isApproved && (
-        <div className="p-3 mb-4 text-sm text-blue-700 bg-blue-100 rounded">
-          This course is <strong>approved</strong>. You can only update
-          non-critical fields (like price, description, and thumbnail).
-        </div>
-      )}
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          placeholder="Title"
-          className="w-full p-2 border rounded"
-          required
-          disabled={isApproved}
-        />
-        <input
-          name="moduleCode"
-          value={form.moduleCode}
-          onChange={handleChange}
-          placeholder="Module Code"
-          className="w-full p-2 border rounded"
-          required
-          disabled={true}
-        />
-        <select
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          className={`w-full p-2 border rounded ${
-            form.category ? "text-black" : "text-gray-400"
-          }`}
-          required
-          disabled={isApproved}
+    <div className="min-h-screen px-4 py-8 bg-gradient-to-br from-gray-50 via-white to-indigo-50 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-8 bg-white border shadow-xl rounded-3xl backdrop-blur-sm border-white/20"
         >
-          <option value="">Select Category</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-        <input
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          placeholder="Price"
-          className="w-full p-2 border rounded"
-        />
-        {/* Thumbnail file input */}
-        <div>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setSelectedFile(e.target.files[0])}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500"
-          />
-          {selectedFile && (
-            <p className="mt-1 text-sm text-gray-600">Selected: {selectedFile.name}</p>
-          )}
-        </div>
-
-        {uploadProgress > 0 && (
-          <div className="mt-3">
-            <div className="flex justify-between mb-1 text-sm text-gray-700">
-              <span>Uploading Thumbnail...</span>
-              <span>{uploadProgress}%</span>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl">
+              <Edit3 className="text-indigo-600 w-7 h-7" />
             </div>
-            <div className="w-full h-2 bg-gray-200 rounded-full">
-              <div
-                className="h-2 transition-all duration-300 bg-green-600 rounded-full"
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
-            </div>
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+              Edit Course
+            </h1>
           </div>
-        )}
 
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Description"
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 text-white bg-purple-700 rounded"
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update Course"}
-        </button>
-      </form>
-      <button
-        onClick={() => navigate(`/instructor/dashboard/manage-content/${id}`)}
-        className="px-4 py-2 mt-4 text-white bg-purple-600 rounded"
-      >
-        Manage Course Content
-      </button>
+          {isApproved && (
+            <div className="flex items-center gap-2 p-4 mb-6 text-sm text-blue-700 bg-blue-50 rounded-xl">
+              <AlertCircle className="w-5 h-5" />
+              <span>
+                This course is <strong>approved</strong>. You can only update non-critical fields.
+              </span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div className="relative">
+              <BookOpen className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                placeholder="Course Title"
+                className="w-full py-3 pl-10 pr-4 text-sm transition-all border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+                disabled={isApproved}
+              />
+            </div>
+
+            {/* Module Code */}
+            <div className="relative">
+              <Tag className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+              <input
+                name="moduleCode"
+                value={form.moduleCode}
+                onChange={handleChange}
+                placeholder="Module Code"
+                className="w-full py-3 pl-10 pr-4 text-sm border border-gray-200 rounded-xl bg-gray-50"
+                required
+                disabled
+              />
+            </div>
+
+            {/* Category */}
+            <div className="relative">
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="w-full py-3 pl-10 pr-10 text-sm transition-all bg-white border border-gray-200 appearance-none rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
+                disabled={isApproved}
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none">
+                <Tag className="w-5 h-5 text-gray-400" />
+              </div>
+              <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="relative">
+              <DollarSign className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+              <input
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                placeholder="Price"
+                className="w-full py-3 pl-10 pr-4 text-sm transition-all border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            {/* Thumbnail */}
+            <div className="space-y-3">
+              {form.thumbnail && (
+                <img
+                  src={form.thumbnail}
+                  alt="Current thumbnail"
+                  className="object-cover w-full h-48 shadow-md rounded-xl"
+                />
+              )}
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center w-full p-6 transition-all border-2 border-dashed cursor-pointer rounded-xl hover:border-indigo-500 hover:bg-indigo-50">
+                  <Image className="w-10 h-10 mb-3 text-indigo-600" />
+                  <span className="text-sm font-medium text-gray-700">Change Thumbnail</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              {selectedFile && (
+                <p className="text-sm text-center text-gray-600">
+                  Selected: <span className="font-medium">{selectedFile.name}</span>
+                </p>
+              )}
+            </div>
+
+            {/* Upload Progress */}
+            {uploadProgress > 0 && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-700">Uploading...</span>
+                  <span className="font-medium text-indigo-600">{uploadProgress}%</span>
+                </div>
+                <div className="w-full h-2 overflow-hidden bg-gray-200 rounded-full">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-indigo-600 to-purple-600"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${uploadProgress}%` }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Description */}
+            <div>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Course Description"
+                rows={5}
+                className="w-full p-4 text-sm transition-all border border-gray-200 resize-none rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex items-center justify-center flex-1 gap-2 py-3 font-medium text-white transition-all shadow-md bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:shadow-lg hover:scale-105 disabled:opacity-50"
+              >
+                {loading ? (
+                  <>Updating... <Loader2 className="w-5 h-5 animate-spin" /></>
+                ) : (
+                  <>Update Course <Edit3 className="w-5 h-5" /></>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate(`/instructor/dashboard/manage-content/${id}`)}
+                className="flex items-center justify-center flex-1 gap-2 py-3 font-medium text-indigo-600 transition-all bg-indigo-50 rounded-xl hover:bg-indigo-100 hover:scale-105"
+              >
+                Manage Content <FileText className="w-5 h-5" />
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      </div>
     </div>
   );
 }

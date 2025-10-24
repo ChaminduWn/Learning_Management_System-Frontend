@@ -11,21 +11,21 @@ export default function Sidebar({ title = "Dashboard", items = [], role = "defau
     const roleColors = {
     admin: "bg-red-700",        // Blue for admin
     instructor: "bg-purple-700", // Purple for instructor
-    student: "bg-green-700",     // Green for student
+    student: "bg-purple-700",     // Green for student
     default: "bg-gray-700",      // Fallback color
   };
 
   const hoverColors = {
     admin: "hover:bg-red-600",
     instructor: "hover:bg-purple-600",
-    student: "hover:bg-green-600",
+    student: "hover:bg-purple-600",
     default: "hover:bg-gray-600",
   };
 
   const activeColors = {
     admin: "bg-red-900",
     instructor: "bg-purple-900",
-    student: "bg-green-900",
+    student: "bg-purple-900",
     default: "bg-gray-900",
   };
 

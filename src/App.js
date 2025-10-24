@@ -36,6 +36,7 @@ import AdminContacts from "./components/AdminContacts";
 import AdminContactDetail from "./components/AdminContactDetail";
 import Feedback from "./pages/Feedback";
 import ContactPage from "./pages/ContactUs";
+import AboutUs from "./pages/AboutUs";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -66,6 +67,8 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         <Route path="/courses" element={<BrowseCourses />} />    
+
+        <Route path="/about" element={<AboutUs />} /> 
 
         <Route path="/feedback" element={<Feedback/>} />    
         <Route path="/contact" element={<ContactPage/>} />    
