@@ -31,9 +31,11 @@ import AdminPayments from "./components/AdminPayments";
 import StudentPaymentHistory from "./pages/student/StudentPaymentHistory";
 import PaymentReceipt from "./pages/PaymentReceipt";
 import AllPayments from "./components/AllPayments";
-import ContactUs from "./pages/ContactUs";
+import ContactUs from "./pages/Feedback";
 import AdminContacts from "./components/AdminContacts";
 import AdminContactDetail from "./components/AdminContactDetail";
+import Feedback from "./pages/Feedback";
+import ContactPage from "./pages/ContactUs";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -65,7 +67,9 @@ function App() {
 
         <Route path="/courses" element={<BrowseCourses />} />    
 
-        <Route path="/contact" element={<ContactUs/>} />    
+        <Route path="/feedback" element={<Feedback/>} />    
+        <Route path="/contact" element={<ContactPage/>} />    
+        
         
         <Route path="/student/dashboard/certificate/:id" element={<CertificateGenerator />} />
 
