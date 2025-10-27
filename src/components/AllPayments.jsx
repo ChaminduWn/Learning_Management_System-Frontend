@@ -155,7 +155,7 @@ export default function AllPayments() {
                         <td className="p-4">
                           {payment.tokenNumber ? String(payment.tokenNumber) : "N/A"}
                         </td>
-                        <td className="p-4">${payment.amount.toFixed(2)}</td>
+                        <td className="p-4">LKR {payment.amount.toFixed(2)}</td>
                         <td className="p-4 capitalize">{payment.status}</td>
                         <td className="p-4">
                           {new Date(payment.createdAt).toLocaleDateString()}

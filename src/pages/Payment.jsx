@@ -174,7 +174,7 @@ function PaymentForm({ clientSecret, course }) {
             className="flex-1 px-6 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
             disabled={processing || !stripe || !elements}
           >
-            {processing ? "Processing..." : `Pay $${course.price}`}
+            {processing ? "Processing..." : `Pay ${course.price} LKR`}
           </button>
         </div>
       </form>

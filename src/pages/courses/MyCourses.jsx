@@ -143,7 +143,7 @@ export default function MyCourses() {
 
                   <div className="flex items-center justify-between mb-4 text-sm">
                     <span className="font-medium text-emerald-600">
-                      {c.price === 0 ? "Free" : `Rs.${c.price.toLocaleString()}`}
+                      {c.price === 0 ? "Free" : `${c.price.toLocaleString()} LKR`}
                     </span>
                     <span className="text-gray-500">{c.enrolledCount || 0} enrolled</span>
                   </div>

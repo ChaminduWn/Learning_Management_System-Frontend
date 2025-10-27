@@ -37,6 +37,7 @@ import AdminContactDetail from "./components/AdminContactDetail";
 import Feedback from "./pages/Feedback";
 import ContactPage from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
+import UserResponses from "./components/UserResponses";
 
 console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
@@ -152,6 +153,8 @@ function App() {
           <Route path="course/:id" element={<CourseView />} />
           <Route path="payments" element={<StudentPaymentHistory />} /> 
           <Route path="payments/receipt/:id" element={<PaymentReceipt />} />
+          <Route path="response" element={<UserResponses />} /> 
+
           
           
         </Route>

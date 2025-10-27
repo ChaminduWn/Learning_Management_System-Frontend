@@ -210,7 +210,7 @@ export default function CourseView() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Price</span>
                   <span className="font-medium text-emerald-600">
-                    {course.price === 0 ? "Free" : `Rs.${course.price}`}
+                    {course.price === 0 ? "Free" : `${course.price} LKR`}
                   </span>
                 </div>
               </div>

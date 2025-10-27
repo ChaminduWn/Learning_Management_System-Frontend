@@ -153,7 +153,7 @@ export default function AdminPayments() {
           <StatCard
             icon={DollarSign}
             title="Total Revenue"
-            value={`$${stats.totalRevenue.toFixed(2)}`}
+            value={`LKR ${stats.totalRevenue.toFixed(2)}`}
             subtitle="From completed payments"
             color="bg-green-600"
           />
@@ -222,7 +222,7 @@ export default function AdminPayments() {
               <div className="p-4 border-l-4 border-green-600 bg-green-50 rounded-xl">
                 <p className="text-sm text-slate-600">Completed Revenue</p>
                 <p className="text-2xl font-bold text-green-700">
-                  ${stats.stats.find((s) => s._id === "completed")?.totalAmount.toFixed(2) || "0.00"}
+                  LKR {stats.stats.find((s) => s._id === "completed")?.totalAmount.toFixed(2) || "0.00"}
                 </p>
                 <p className="text-xs text-slate-500">
                   {stats.stats.find((s) => s._id === "completed")?.count || 0} transactions
@@ -231,7 +231,7 @@ export default function AdminPayments() {
               <div className="p-4 border-l-4 border-red-600 bg-red-50 rounded-xl">
                 <p className="text-sm text-slate-600">Refunded Amount</p>
                 <p className="text-2xl font-bold text-red-700">
-                  ${stats.stats.find((s) => s._id === "refunded")?.totalAmount.toFixed(2) || "0.00"}
+                  LKR {stats.stats.find((s) => s._id === "refunded")?.totalAmount.toFixed(2) || "0.00"}
                 </p>
                 <p className="text-xs text-slate-500">
                   {stats.stats.find((s) => s._id === "refunded")?.count || 0} refunds
@@ -240,7 +240,7 @@ export default function AdminPayments() {
               <div className="p-4 border-l-4 border-yellow-600 bg-yellow-50 rounded-xl">
                 <p className="text-sm text-slate-600">Pending Amount</p>
                 <p className="text-2xl font-bold text-yellow-700">
-                  ${stats.stats.find((s) => s._id === "pending")?.totalAmount.toFixed(2) || "0.00"}
+                  LKR {stats.stats.find((s) => s._id === "pending")?.totalAmount.toFixed(2) || "0.00"}
                 </p>
                 <p className="text-xs text-slate-500">
                   {stats.stats.find((s) => s._id === "pending")?.count || 0} pending
@@ -250,7 +250,7 @@ export default function AdminPayments() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-slate-600">Net Revenue</span>
                   <span className="text-xl font-bold text-slate-800">
-                    ${((stats.stats.find((s) => s._id === "completed")?.totalAmount || 0) - (stats.stats.find((s) => s._id === "refunded")?.totalAmount || 0)).toFixed(2)}
+                    LKR {((stats.stats.find((s) => s._id === "completed")?.totalAmount || 0) - (stats.stats.find((s) => s._id === "refunded")?.totalAmount || 0)).toFixed(2)}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-slate-500">
@@ -263,7 +263,7 @@ export default function AdminPayments() {
                     Average Transaction
                   </span>
                   <span className="text-xl font-bold text-indigo-700">
-                    ${stats.totalPayments > 0 ? (stats.totalRevenue / stats.completedPayments).toFixed(2) : "0.00"}
+                    LKR {stats.totalPayments > 0 ? (stats.totalRevenue / stats.completedPayments).toFixed(2) : "0.00"}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-slate-500">

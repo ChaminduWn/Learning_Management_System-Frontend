@@ -206,9 +206,10 @@ export default function BrowseCourses() {
                   {/* Meta */}
                   <div className="flex items-center justify-between mb-5 text-sm">
                     <div className="flex items-center gap-1 text-gray-600">
-                      <DollarSign size={16} className="text-emerald-600" />
+                      {/* <DollarSign size={16} className="text-emerald-600" /> */}
+                      
                       <span className="font-semibold">
-                        {course.price === 0 ? "Free" : `Rs.${course.price.toLocaleString()}`}
+                        {course.price === 0 ? "Free" : `${course.price.toLocaleString()} LKR`}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 text-gray-500">

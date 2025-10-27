@@ -126,7 +126,7 @@ export default function AdminRefundManagement() {
           <div className="p-4 transition-all duration-300 bg-white shadow-md rounded-2xl hover:shadow-lg">
             <p className="text-sm text-slate-600">Total Refundable Amount</p>
             <p className="text-2xl font-bold text-green-600">
-              ${payments.reduce((sum, p) => sum + p.amount, 0).toFixed(2)}
+             LKR  {payments.reduce((sum, p) => sum + p.amount, 0).toFixed(2)}
             </p>
           </div>
           <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-2xl">
@@ -219,7 +219,7 @@ export default function AdminRefundManagement() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="text-sm font-bold text-slate-900">
-                        ${payment.amount.toFixed(2)}
+                        {payment.amount.toFixed(2)} LKR
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">
@@ -299,7 +299,7 @@ export default function AdminRefundManagement() {
                   <div className="flex justify-between pt-2 border-t border-slate-200">
                     <span className="text-slate-600">Refund Amount:</span>
                     <span className="text-lg font-bold text-red-600">
-                      ${selectedPayment.amount.toFixed(2)}
+                      {selectedPayment.amount.toFixed(2)} LKR
                     </span>
                   </div>
                 </div>

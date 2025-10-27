@@ -175,7 +175,7 @@ export default function StudentPaymentHistory() {
               <div className="p-4 border rounded-lg">
                 <p className="text-sm text-gray-600">Total Spent</p>
                 <p className="text-2xl font-bold text-green-600">
-                  $
+                  LKR
                   {payments
                     .filter((p) => p.status === "completed")
                     .reduce((sum, p) => sum + p.amount, 0)

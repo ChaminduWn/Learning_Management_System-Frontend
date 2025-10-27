@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Sidebar from "../../components/Sidebar";
-import { BookOpen, CheckCircle, Clock, Trophy, ArrowRight } from "lucide-react";
+import { BookOpen, CheckCircle, Clock, Trophy, ArrowRight,MessageSquare } from "lucide-react";
 
 export default function StudentDashboard() {
   const { user } = useContext(AuthContext);
@@ -56,6 +56,8 @@ export default function StudentDashboard() {
     { key: "profile", label: "Profile", path: "/student/dashboard/profile", icon: "User" },
     { key: "enrolled", label: "Enrolled Courses", path: "/student/dashboard", icon: "BookOpen" },
     { key: "payments", label: "Payment History", path: "/student/dashboard/payments", icon: "CreditCard" },
+    { key: "response", label: "Response", path: "/student/dashboard/response", icon: "MessageSquare" },
+
   ];
 
   if (loading) {
