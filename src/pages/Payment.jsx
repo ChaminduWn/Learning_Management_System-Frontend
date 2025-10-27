@@ -156,7 +156,7 @@ function PaymentForm({ clientSecret, course }) {
             />
           </div>
           <p className="mt-1 text-xs text-gray-500">
-            Test card: 4242 4242 4242 4242 | Exp: 12/34 | CVV: 123
+            Test card: 4242 4242 4242 4242 | Exp: 12/31 | CVV: 123
           </p>
         </div>
 

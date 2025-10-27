@@ -52,7 +52,7 @@ export default function AdminDashboard() {
     { key: "course", label: "Course Approval", path: "/admin/dashboard/course" },
     { key: "refund", label: "Refund", path: "/admin/dashboard/refund" },
     { key: "payments", label: "Payments", path: "/admin/dashboard/payments" },
-    { key: "contacts", label: "Contact Messages", path: "/admin/dashboard/contacts" },
+    { key: "contacts", label: "Feedback", path: "/admin/dashboard/contacts" },
   ];
 
   const isMainDashboard = location.pathname === "/admin/dashboard";
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
     if (!user?.token) return;
     const fetchStats = async () => {
       try {
-        // --- FETCH COURSES ---
+        
         const courseRes = await fetch("http://localhost:5000/api/courses", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
             enrollments: c.enrolledStudents?.length || 0,
           }));
 
-        // --- FETCH USERS ---
+        
         const userRes = await fetch("http://localhost:5000/api/auth", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
@@ -86,7 +86,7 @@ export default function AdminDashboard() {
         const totalInstructors = users.filter((u) => u.role === "Instructor").length;
         const totalAdmins = users.filter((u) => u.role === "Admin").length;
 
-        // --- FETCH PAYMENT STATS ---
+        
         const payStatsRes = await fetch("http://localhost:5000/api/payments/stats", {
           headers: { Authorization: `Bearer ${user.token}` },
         });

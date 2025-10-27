@@ -10,7 +10,6 @@ import ResetPassword from "./pages/ResetPassword";
 import PrivateRoute from "./components/PrivateRoute";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCourseApproval from "./components/AdminCourseApproval";
 import AdminUserManagement from "./components/AdminUserManagement";
 import EditCourse from "./pages/courses/EditCourse";
@@ -31,15 +30,15 @@ import AdminPayments from "./components/AdminPayments";
 import StudentPaymentHistory from "./pages/student/StudentPaymentHistory";
 import PaymentReceipt from "./pages/PaymentReceipt";
 import AllPayments from "./components/AllPayments";
-import ContactUs from "./pages/Feedback";
 import AdminContacts from "./components/AdminContacts";
 import AdminContactDetail from "./components/AdminContactDetail";
 import Feedback from "./pages/Feedback";
 import ContactPage from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
 import UserResponses from "./components/UserResponses";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
-console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+// console.log("Stripe Publishable Key:", process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const stripeKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
 if (!stripeKey) {

@@ -130,7 +130,7 @@ export default function StudentPaymentHistory() {
                     <div className="flex items-center gap-2">
                       <FaDollarSign className="text-green-600" />
                       <span className="text-2xl font-bold text-gray-800">
-                        ${payment.amount.toFixed(2)}
+                        LKR{payment.amount.toFixed(2)}
                       </span>
                     </div>
                     {getStatusBadge(payment.status)}

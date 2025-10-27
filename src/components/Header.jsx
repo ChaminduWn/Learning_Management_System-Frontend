@@ -69,14 +69,14 @@ export default function Header() {
       hover: "hover:bg-slate-700"
     },
     Instructor: {
-      gradient: "from-indigo-600 to-indigo-700",
-      badge: "bg-indigo-100 text-indigo-700",
-      hover: "hover:bg-indigo-700"
+      gradient: "from-purple-600 to-purple-700",
+      badge: "bg-purple-100 text-purple-700",
+      hover: "hover:bg-purple-700"
     },
     Student: {
       gradient: "from-purple-600 to-purple-700",
-      badge: "bg-emerald-100 text-emerald-700",
-      hover: "hover:bg-emerald-700"
+      badge: "bg-purple-100 text-purple-700",
+      hover: "hover:bg-purple-700"
     },
     default: {
       gradient: "from-purple-600 to-purple-700",

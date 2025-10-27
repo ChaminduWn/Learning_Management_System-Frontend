@@ -203,7 +203,7 @@ export default function BrowseCourses() {
                   </h3>
                   <p className="mb-4 text-sm text-gray-600 line-clamp-2">{course.description}</p>
 
-                  {/* Meta */}
+                  
                   <div className="flex items-center justify-between mb-5 text-sm">
                     <div className="flex items-center gap-1 text-gray-600">
                       {/* <DollarSign size={16} className="text-emerald-600" /> */}
