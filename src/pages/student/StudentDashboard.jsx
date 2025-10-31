@@ -72,7 +72,7 @@ export default function StudentDashboard() {
     <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <Sidebar title=" Dashboard" items={items} onSelect={(item) => navigate(item.path)} role="student" />
 
-      <div className="flex-1 p-6 lg:p-10">
+      <div className="flex-1 p-6 ml-64 overflow-y-auto lg:p-10">
         {location.pathname === "/student/dashboard" ? (
           <div className="max-w-6xl mx-auto space-y-10">
             {/* Header */}

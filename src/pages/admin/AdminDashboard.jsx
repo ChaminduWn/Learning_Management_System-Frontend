@@ -32,7 +32,6 @@ export default function AdminDashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-
   const [stats, setStats] = useState({
     approvedCourses: 0,
     pendingCourses: 0,
@@ -42,10 +41,8 @@ export default function AdminDashboard() {
     totalInstructors: 0,
     totalAdmins: 0,
   });
-
   const [paymentStats, setPaymentStats] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const items = [
     { key: "profile", label: "Profile", path: "/admin/dashboard/profile" },
     { key: "users", label: "Users", path: "/admin/dashboard/users" },
@@ -54,14 +51,12 @@ export default function AdminDashboard() {
     { key: "payments", label: "Payments", path: "/admin/dashboard/payments" },
     { key: "contacts", label: "Feedback", path: "/admin/dashboard/contacts" },
   ];
-
   const isMainDashboard = location.pathname === "/admin/dashboard";
-
   useEffect(() => {
     if (!user?.token) return;
     const fetchStats = async () => {
       try {
-        
+       
         const courseRes = await fetch("http://localhost:5000/api/courses", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
@@ -69,15 +64,13 @@ export default function AdminDashboard() {
         const approvedCourses = courses.filter((c) => c.status === "Approved").length;
         const pendingCourses = courses.filter((c) => c.status === "Pending").length;
         const rejectedCourses = courses.filter((c) => c.status === "Rejected").length;
-
         const enrollmentsPerCourse = courses
           .filter((c) => c.status === "Approved")
           .map((c) => ({
             label: c.title?.length > 10 ? c.title.slice(0, 10) + "..." : c.title,
             enrollments: c.enrolledStudents?.length || 0,
           }));
-
-        
+       
         const userRes = await fetch("http://localhost:5000/api/auth", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
@@ -85,14 +78,12 @@ export default function AdminDashboard() {
         const totalStudents = users.filter((u) => u.role === "Student").length;
         const totalInstructors = users.filter((u) => u.role === "Instructor").length;
         const totalAdmins = users.filter((u) => u.role === "Admin").length;
-
-        
+       
         const payStatsRes = await fetch("http://localhost:5000/api/payments/stats", {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         const payData = await payStatsRes.json();
         if (!payStatsRes.ok) throw new Error(payData.message || "Failed to load payment stats");
-
         setStats({
           approvedCourses,
           pendingCourses,
@@ -102,7 +93,6 @@ export default function AdminDashboard() {
           totalInstructors,
           totalAdmins,
         });
-
         setPaymentStats(payData);
       } catch (err) {
         toast.error(err.message || "Failed to fetch dashboard data");
@@ -110,10 +100,8 @@ export default function AdminDashboard() {
         setLoading(false);
       }
     };
-
     fetchStats();
   }, [user]);
-
   const chartOptions = {
     maintainAspectRatio: false,
     plugins: {
@@ -126,7 +114,6 @@ export default function AdminDashboard() {
       y: { ticks: { color: "#334155" }, grid: { color: "#e2e8f0" } },
     },
   };
-
   const courseStatusData = {
     labels: ["Approved", "Pending", "Rejected"],
     datasets: [
@@ -139,7 +126,6 @@ export default function AdminDashboard() {
       },
     ],
   };
-
   const enrollmentData = {
     labels: stats.enrollmentsPerCourse.map((c) => c.label),
     datasets: [
@@ -152,7 +138,6 @@ export default function AdminDashboard() {
       },
     ],
   };
-
   const userData = {
     labels: ["Students", "Instructors", "Admins"],
     datasets: [
@@ -165,7 +150,6 @@ export default function AdminDashboard() {
       },
     ],
   };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -176,18 +160,16 @@ export default function AdminDashboard() {
       </div>
     );
   }
-
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="flex min-h-full bg-gradient-to-br from-slate-50 via-white to-slate-100">
       <Sidebar
         title="Admin Panel 🛠️"
         items={items}
         onSelect={(item) => navigate(item.path)}
         role="admin"
-        className="bg-slate-800 text-slate-100"
+        className=" bg-slate-800 text-slate-100"
       />
-
-      <div className="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex-1 p-6 ml-64">
         {isMainDashboard ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -202,7 +184,6 @@ export default function AdminDashboard() {
                 Admin Dashboard
               </h2>
             </div>
-
             {/* Key Stats */}
             <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
               <motion.div
@@ -262,7 +243,6 @@ export default function AdminDashboard() {
                 <p className="text-2xl font-bold text-purple-600">{stats.totalInstructors}</p>
               </motion.div>
             </div>
-
             {/* Total Revenue, Payments, Admins, Rejected Courses */}
             {paymentStats && (
               <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
@@ -330,7 +310,6 @@ export default function AdminDashboard() {
                 </motion.div>
               </div>
             )}
-
             {/* Charts */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <motion.div

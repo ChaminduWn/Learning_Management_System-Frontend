@@ -111,7 +111,7 @@ export default function InstructorDashboard() {
         role="instructor"
       />
 
-      <div className="flex-1 p-6 lg:p-10">
+      <div className="flex-1 p-6 ml-64 overflow-y-auto lg:p-10">
         {isMainDashboard ? (
           <div className="mx-auto space-y-8 max-w-7xl">
             {/* Header */}
