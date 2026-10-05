@@ -1,70 +1,161 @@
-# Getting Started with Create React App
+# EduLearn · Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React learning management application for discovering courses, managing learning content, and administering users and payments. EduLearn provides separate workspaces for students, instructors, and administrators.
 
-## Available Scripts
+**[Backend repository](https://github.com/ChaminduWn/Learning_Management_System-Backend)** · **[Screenshots](#screenshots)** · **[Getting started](#getting-started)**
 
-In the project directory, you can run:
+![EduLearn home page](docs/screenshots/home.png)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+| Workspace | Capabilities |
+| --- | --- |
+| Student | Search and filter courses, enroll in free courses, pay for paid courses, complete modules, track progress, print completion certificates, and view payment history and receipts. |
+| Instructor | Create courses, edit details, manage video/image/PDF/link content, and track course approval and enrollment. |
+| Admin | View dashboard statistics, search users, activate or deactivate accounts, approve or reject courses, manage refunds, review payments, and respond to feedback. |
+| Shared | Registration, login, password recovery, profile editing, and role-specific navigation. |
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Technology
 
-### `npm test`
+| Area | Tools |
+| --- | --- |
+| Interface | React 19, React Router 7 |
+| Styling and animation | Tailwind CSS 3, Framer Motion |
+| Charts | Chart.js, react-chartjs-2 |
+| Payments | Stripe.js, React Stripe.js |
+| Icons and notifications | Lucide React, React Icons, React Toastify |
+| Development | Create React App / react-scripts 5, React Testing Library |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting started
 
-### `npm run build`
+### 1. Install dependencies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+You need Node.js, npm, Git, and the companion backend. No Node.js version is pinned in this repository.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone https://github.com/ChaminduWn/Learning_Management_System-Frontend.git
+cd Learning_Management_System-Frontend
+npm ci
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Configure payments
 
-### `npm run eject`
+Create `.env.local` in the repository root:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```dotenv
+REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_replace_with_your_publishable_key
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Use a Stripe test publishable key from the same account as the backend's test secret key. Only the publishable key belongs in the frontend; React environment variables are included in the browser bundle. Restart the development server after changing this file.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Start the application
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Follow the [backend setup guide](https://github.com/ChaminduWn/Learning_Management_System-Backend#readme) and run its API on `http://localhost:5000`. Then, in this repository:
 
-## Learn More
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Open **http://localhost:3000**. Requests currently use `http://localhost:5000/api` directly in the source, and the backend permits the frontend origin `http://localhost:3000`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 4. Explore the workflow
 
-### Code Splitting
+1. Register an **Instructor** account and create a course with learning modules.
+2. Sign in as an **Admin** and approve the course. See the backend guide for initial admin setup.
+3. Register a **Student** account and browse approved courses.
+4. Enroll in a free course or use Stripe test mode for a paid course.
+5. Complete its modules and open the completion certificate for printing.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The registration form offers Student and Instructor roles. An empty database will not contain the courses, users, or transactions shown in the screenshots.
 
-### Analyzing the Bundle Size
+## Screenshots
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Course discovery
 
-### Making a Progressive Web App
+Searchable course cards with free enrollment and paid checkout entry points.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+![Course catalog with search and price filters](docs/screenshots/course-catalog.png)
 
-### Advanced Configuration
+### Instructor course management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Course approval status, enrollment counts, and shortcuts to edit details and content.
 
-### Deployment
+![Instructor course management](docs/screenshots/instructor-courses.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Administration overview
 
-### `npm run build` fails to minify
+Summary cards and charts for course approvals, enrollments, users, and payments.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Admin dashboard](docs/screenshots/admin-dashboard.png)
+
+<details>
+<summary><strong>User management</strong></summary>
+
+Search accounts by name, email, or role and manage activation status.
+
+![Admin user management](docs/screenshots/user-management.png)
+
+</details>
+
+<details>
+<summary><strong>Refund management</strong></summary>
+
+Review completed payments and initiate refunds.
+
+![Admin refund management](docs/screenshots/refund-management.png)
+
+</details>
+
+<details>
+<summary><strong>Payment statistics</strong></summary>
+
+Review revenue totals and the distribution of payment statuses.
+
+![Admin payment statistics](docs/screenshots/payment-statistics.png)
+
+</details>
+
+## Project structure
+
+```text
+docs/screenshots/    README screenshots
+public/             Static public assets and HTML entry point
+src/
+  components/       Shared UI, route guards, and administration components
+  context/          Authentication state
+  pages/
+    admin/          Administrator dashboard
+    courses/        Instructor course and content management
+    instructor/     Instructor dashboard
+    student/        Catalog, learning progress, and certificates
+  App.js            Routes and Stripe initialization
+```
+
+## Available commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm start` | Run the development server. |
+| `npm run build` | Generate the production bundle in `build/`. |
+| `npm test` | Open the interactive test runner. |
+
+## Troubleshooting
+
+| Symptom | Check |
+| --- | --- |
+| Courses or login requests fail | Start the backend on port 5000 and confirm its MongoDB connection succeeds. |
+| Browser reports a CORS error | Use port 3000, or update the allowed origin in the backend's `server.js`. |
+| Stripe key is undefined | Set `REACT_APP_STRIPE_PUBLISHABLE_KEY` in `.env.local` and restart `npm start`. |
+| A changed role does not appear | Log out and back in to refresh locally stored account information. |
+| A new course is absent from the catalog | An administrator must approve it first. |
+
+## Deployment notes
+
+- Replace hardcoded localhost API URLs before deploying to another host; there is currently no centralized API URL environment setting.
+- Configure the backend's allowed origin and `CLIENT_URL` for the deployed frontend.
+- Configure the static host to serve `index.html` for client-side routes, then publish the output of `npm run build`.
+- The interface displays LKR in several places, while the backend currently creates Stripe PaymentIntents in USD. Align currency throughout the application before using live payments.
+
+## Contributing
+
+For bug reports, include the affected role, page, reproduction steps, and relevant browser errors without credentials or tokens. Keep pull requests focused and describe how you verified the affected workflow.
